@@ -1,0 +1,56 @@
+{
+  "name": "@mcbe-mods/runtime",
+  "type": "module",
+  "version": "0.0.1-beta.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.1",
+  "description": "Unified entry point for MCBE Script API runtime",
+  "author": "Lete114",
+  "license": "MIT",
+  "homepage": "https://github.com/mcbe-mods/runtime#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcbe-mods/runtime.git"
+  },
+  "bugs": "https://github.com/mcbe-mods/runtime/issues",
+  "keywords": [
+    "minecraft",
+    "mcbe",
+    "runtime",
+    "script-api",
+    "bedrock"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepublishOnly": "nr build",
+    "test": "pnpm run build && vitest"
+  },
+  "peerDependencies": {
+    "@minecraft/server": ">=1.18.0"
+  },
+  "dependencies": {
+    "@mcbe-mods/bedrock-url": "workspace:^",
+    "@mcbe-mods/ipc": "workspace:^",
+    "@mcbe-mods/log": "workspace:^",
+    "@mcbe-mods/protocol": "workspace:^",
+    "@mcbe-mods/rpc": "workspace:^"
+  },
+  "devDependencies": {
+    "@minecraft/server": "catalog:",
+    "tsdown": "catalog:cli",
+    "typescript": "catalog:cli",
+    "vitest": "catalog:testing"
+  }
+}

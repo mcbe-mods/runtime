@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["ES2021"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@mcbe-mods/bedrock-url": ["./packages/bedrock-url/src/index.ts"],
+      "@mcbe-mods/ipc": ["./packages/ipc/src/index.ts"],
+      "@mcbe-mods/log": ["./packages/log/src/index.ts"],
+      "@mcbe-mods/protocol": ["./packages/protocol/src/index.ts"],
+      "@mcbe-mods/rpc": ["./packages/rpc/src/index.ts"]
+    },
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "packages/bedrock-url/src",
+    "packages/ipc/src",
+    "packages/log/src",
+    "packages/protocol/src",
+    "packages/rpc/src",
+    "packages/runtime/src"
+  ]
+}
