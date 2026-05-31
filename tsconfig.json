@@ -9,7 +9,8 @@
       "@mcbe-mods/ipc": ["./packages/ipc/src/index.ts"],
       "@mcbe-mods/log": ["./packages/log/src/index.ts"],
       "@mcbe-mods/protocol": ["./packages/protocol/src/index.ts"],
-      "@mcbe-mods/rpc": ["./packages/rpc/src/index.ts"]
+      "@mcbe-mods/rpc": ["./packages/rpc/src/index.ts"],
+      "@mcbe-mods/utils": ["./packages/utils/src/index.ts"]
     },
     "resolveJsonModule": true,
     "strict": true,
@@ -26,6 +27,7 @@
     "packages/log/src",
     "packages/protocol/src",
     "packages/rpc/src",
-    "packages/runtime/src"
+    "packages/runtime/src",
+    "packages/utils/src"
   ]
 }

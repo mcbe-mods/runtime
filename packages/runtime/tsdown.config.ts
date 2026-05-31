@@ -7,7 +7,6 @@ export default defineConfig({
   dts: true,
   exports: true,
   publint: true,
-  tsconfig: '../../tsconfig.json',
   deps: {
     neverBundle: [
       '@mcbe-mods/bedrock-url',

@@ -266,6 +266,9 @@ importers:
       '@mcbe-mods/rpc':
         specifier: workspace:^
         version: link:../rpc
+      '@mcbe-mods/utils':
+        specifier: workspace:^
+        version: link:../utils
     devDependencies:
       '@minecraft/server':
         specifier: 'catalog:'
@@ -276,6 +279,61 @@ importers:
       typescript:
         specifier: catalog:cli
         version: 6.0.3
+      vitest:
+        specifier: catalog:testing
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0))
+
+  packages/utils:
+    dependencies:
+      '@minecraft/server':
+        specifier: '>=1.18.0'
+        version: 1.18.0(@minecraft/vanilla-data@1.26.21)
+    devDependencies:
+      '@antfu/eslint-config':
+        specifier: catalog:cli
+        version: 8.3.0(@typescript-eslint/rule-tester@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@6.0.3))(@typescript-eslint/typescript-estree@8.59.3(typescript@6.0.3))(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@6.0.3))(@vue/compiler-sfc@3.5.34)(eslint@10.4.0(jiti@2.7.0))(typescript@6.0.3)(vitest@4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0)))
+      '@antfu/ni':
+        specifier: catalog:cli
+        version: 30.1.0
+      '@antfu/utils':
+        specifier: catalog:inlined
+        version: 9.3.0
+      '@types/node':
+        specifier: catalog:types
+        version: 25.8.0
+      bumpp:
+        specifier: catalog:cli
+        version: 11.1.0
+      eslint:
+        specifier: catalog:cli
+        version: 10.4.0(jiti@2.7.0)
+      lint-staged:
+        specifier: catalog:cli
+        version: 16.4.0
+      publint:
+        specifier: catalog:cli
+        version: 0.3.21
+      simple-git-hooks:
+        specifier: catalog:cli
+        version: 2.13.1
+      tsdown:
+        specifier: catalog:cli
+        version: 0.21.10(publint@0.3.21)(synckit@0.11.12)(typescript@6.0.3)
+      tsdown-stale-guard:
+        specifier: catalog:testing
+        version: 0.1.2(tsdown@0.21.10(publint@0.3.21)(synckit@0.11.12)(typescript@6.0.3))
+      tsnapi:
+        specifier: catalog:testing
+        version: 0.3.3(vitest@4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0)))
+      tsx:
+        specifier: catalog:cli
+        version: 4.22.0
+      typescript:
+        specifier: catalog:cli
+        version: 6.0.3
+      vite:
+        specifier: catalog:cli
+        version: 8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0)
       vitest:
         specifier: catalog:testing
         version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0))

@@ -1,14 +1,14 @@
 {
-  "name": "@mcbe-mods/runtime",
+  "name": "@mcbe-mods/utils",
   "type": "module",
-  "version": "0.0.1-beta.1",
+  "version": "0.1.2",
+  "packageManager": "pnpm@10.33.1",
+  "description": "Utility functions for Minecraft Bedrock Edition mod development",
+  "author": "Lete114",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.33.1",
-  "description": "Unified entry point for MCBE Script API runtime",
-  "author": "Lete114",
-  "license": "MIT",
   "homepage": "https://github.com/mcbe-mods/runtime#readme",
   "repository": {
     "type": "git",
@@ -17,10 +17,8 @@
   "bugs": "https://github.com/mcbe-mods/runtime/issues",
   "keywords": [
     "minecraft",
-    "mcbe",
-    "runtime",
-    "script-api",
-    "bedrock"
+    "bedrock",
+    "utils"
   ],
   "sideEffects": false,
   "exports": {
@@ -34,24 +32,32 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "lint": "eslint",
     "prepublishOnly": "nr build",
-    "test": "pnpm run build && vitest"
+    "release": "bumpp",
+    "start": "tsx src/index.ts",
+    "test": "pnpm run build && vitest",
+    "typecheck": "tsc"
   },
   "peerDependencies": {
     "@minecraft/server": ">=1.18.0"
   },
-  "dependencies": {
-    "@mcbe-mods/bedrock-url": "workspace:^",
-    "@mcbe-mods/ipc": "workspace:^",
-    "@mcbe-mods/log": "workspace:^",
-    "@mcbe-mods/protocol": "workspace:^",
-    "@mcbe-mods/rpc": "workspace:^",
-    "@mcbe-mods/utils": "workspace:^"
-  },
   "devDependencies": {
-    "@minecraft/server": "catalog:",
+    "@antfu/eslint-config": "catalog:cli",
+    "@antfu/ni": "catalog:cli",
+    "@antfu/utils": "catalog:inlined",
+    "@types/node": "catalog:types",
+    "bumpp": "catalog:cli",
+    "eslint": "catalog:cli",
+    "lint-staged": "catalog:cli",
+    "publint": "catalog:cli",
+    "simple-git-hooks": "catalog:cli",
     "tsdown": "catalog:cli",
+    "tsdown-stale-guard": "catalog:testing",
+    "tsnapi": "catalog:testing",
+    "tsx": "catalog:cli",
     "typescript": "catalog:cli",
+    "vite": "catalog:cli",
     "vitest": "catalog:testing"
   }
 }

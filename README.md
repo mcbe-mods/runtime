@@ -13,6 +13,7 @@ Monorepo for Minecraft Bedrock Edition Script API runtime packages.
 | [`@mcbe-mods/log`](./packages/log) | Level-based logging with lazy evaluation and timestamps |
 | [`@mcbe-mods/protocol`](./packages/protocol) | `bedrock://` transport layer — `get`/`post`/`onReceive` |
 | [`@mcbe-mods/rpc`](./packages/rpc) | Remote Procedure Call — `invoke`/`handle` with timeout |
+| [`@mcbe-mods/utils`](./packages/utils) | Utility functions — game ticks, color codes, XP, item grouping, etc. |
 | [`@mcbe-mods/runtime`](./packages/runtime) | Aggregator — re-exports all `@mcbe-mods/*` packages |
 
 ## Install

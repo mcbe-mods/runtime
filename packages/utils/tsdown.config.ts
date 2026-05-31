@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsdown'
+import { StaleGuardRecorder } from 'tsdown-stale-guard'
 
 export default defineConfig({
   entry: [
@@ -7,12 +8,7 @@ export default defineConfig({
   dts: true,
   exports: true,
   publint: true,
-  deps: {
-    neverBundle: [
-      '@minecraft/server',
-      '@mcbe-mods/protocol',
-      '@mcbe-mods/log',
-      '@mcbe-mods/bedrock-url',
-    ],
-  },
+  plugins: [
+    StaleGuardRecorder(),
+  ],
 })
