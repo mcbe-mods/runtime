@@ -35,7 +35,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "prepublishOnly": "nr build",
+    "prepublishOnly": "pnpm build",
     "test": "pnpm run build && vitest"
   },
   "peerDependencies": {
