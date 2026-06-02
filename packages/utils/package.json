@@ -1,7 +1,7 @@
 {
   "name": "@mcbe-mods/utils",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.2-beta.0",
   "packageManager": "pnpm@10.33.1",
   "description": "Utility functions for Minecraft Bedrock Edition mod development",
   "author": "Lete114",
@@ -39,7 +39,6 @@
     "@minecraft/server": ">=1.18.0"
   },
   "devDependencies": {
-
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",
