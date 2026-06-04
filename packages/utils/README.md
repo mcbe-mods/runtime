@@ -16,7 +16,7 @@ npm install @mcbe-mods/utils
 ```
 
 ```ts
-import { calcGameTicks, color, Experience, getRadiusRange, getRandomProbability, getRandomRangeValue, splitGroups } from '@mcbe-mods/utils'
+import { color, Experience, getRadiusRange, getRandomProbability, getRandomRangeValue, ms2ticks, splitGroups } from '@mcbe-mods/utils'
 
 // splitGroups - split items into stacks
 splitGroups(65) // => [64, 1]
@@ -31,8 +31,8 @@ const exp = new Experience()
 exp.addXP(100)
 exp.getLevel() // => 7
 
-// calcGameTicks - time to ticks
-calcGameTicks(1000) // => 20
+// ms2ticks - time to ticks
+ms2ticks(1000) // => 20
 
 // getRadiusRange - block position range
 getRadiusRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions
@@ -45,7 +45,7 @@ getRadiusRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions
 | `splitGroups(sum, groupSize?)` | Split a number into groups of a given size |
 | `color` | Minecraft color/formatting code stylizer |
 | `Experience` | Player experience calculator (leveling up) |
-| `calcGameTicks(ms?, ticksPerSec?, msPerSec?)` | Convert real time to game ticks |
+| `ms2ticks(ms?, ticksPerSec?, msPerSec?)` | Convert real time to game ticks |
 | `getRadiusRange(location, radius?)` | Get block positions within a radius |
 | `getRandomProbability(probability)` | Random chance with percentage |
 | `getRandomRangeValue(min, max)` | Random integer within a range |

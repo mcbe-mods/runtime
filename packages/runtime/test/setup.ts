@@ -16,7 +16,3 @@ vi.mock('@minecraft/server', () => ({
     Server: 'Server',
   },
 }))
-
-vi.mock('@mcbe-mods/utils', () => ({
-  calcGameTicks: vi.fn((ms: number) => Math.ceil(ms / 50)),
-}))
