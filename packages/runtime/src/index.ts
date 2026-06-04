@@ -1,4 +1,6 @@
 export { BedrockURL, URLSearchParams } from '@mcbe-mods/bedrock-url'
+export { Discover } from '@mcbe-mods/discover'
+export type { DiscoverOptions, ResolvedService, ServiceEvent } from '@mcbe-mods/discover'
 export { Chunker, Compressor, EVENTS, IPC, PROTOCOL_VERSION } from '@mcbe-mods/ipc'
 export type { Deserializer, IPCEvents, IPCOptions, OnOptions, SendOptions, Serializer } from '@mcbe-mods/ipc'
 export { Log } from '@mcbe-mods/log'

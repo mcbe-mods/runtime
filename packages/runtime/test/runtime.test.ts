@@ -3,6 +3,7 @@ import {
   BedrockURL,
   Chunker,
   Compressor,
+  Discover,
   EVENTS,
   IPC,
   Log,
@@ -32,6 +33,10 @@ describe('@mcbe-mods/runtime', () => {
 
   it('re-exports protocol', () => {
     expect(Protocol).toBeDefined()
+  })
+
+  it('re-exports discover', () => {
+    expect(Discover).toBeDefined()
   })
 
   it('re-exports rpc', () => {

@@ -1,12 +1,12 @@
 {
-  "name": "@mcbe-mods/runtime",
+  "name": "@mcbe-mods/discover",
   "type": "module",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.0",
   "publishConfig": {
     "access": "public"
   },
   "packageManager": "pnpm@10.33.1",
-  "description": "Unified entry point for MCBE Script API runtime",
+  "description": "Service discovery for MCBE Script API — heartbeat-based in-world registry",
   "author": "Lete114",
   "license": "MIT",
   "homepage": "https://github.com/mcbe-mods/runtime#readme",
@@ -18,9 +18,11 @@
   "keywords": [
     "minecraft",
     "mcbe",
-    "runtime",
-    "script-api",
-    "bedrock"
+    "discover",
+    "discovery",
+    "mdns",
+    "bedrock",
+    "script-api"
   ],
   "sideEffects": false,
   "exports": {
@@ -42,12 +44,8 @@
   },
   "dependencies": {
     "@mcbe-mods/bedrock-url": "workspace:^",
-    "@mcbe-mods/discover": "workspace:^",
-    "@mcbe-mods/ipc": "workspace:^",
     "@mcbe-mods/log": "workspace:^",
-    "@mcbe-mods/protocol": "workspace:^",
-    "@mcbe-mods/rpc": "workspace:^",
-    "@mcbe-mods/utils": "workspace:^"
+    "@mcbe-mods/protocol": "workspace:^"
   },
   "devDependencies": {
     "@minecraft/server": "catalog:",

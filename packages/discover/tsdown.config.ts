@@ -9,13 +9,10 @@ export default defineConfig({
   publint: true,
   deps: {
     neverBundle: [
-      '@mcbe-mods/bedrock-url',
-      '@mcbe-mods/discover',
-      '@mcbe-mods/ipc',
-      '@mcbe-mods/log',
-      '@mcbe-mods/protocol',
-      '@mcbe-mods/rpc',
       '@minecraft/server',
+      '@mcbe-mods/protocol',
+      '@mcbe-mods/log',
+      '@mcbe-mods/bedrock-url',
     ],
   },
 })
