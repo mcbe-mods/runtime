@@ -30,7 +30,7 @@ describe('IPC', () => {
 
     expect(system.sendScriptEvent).toHaveBeenCalledTimes(1)
     const [u, payload] = (system.sendScriptEvent as any).mock.calls[0]
-    expect(u).toMatch(/^bedrock:\/\/test\.ipc\/ping\?v=1&id=[A-F0-9]+$/)
+    expect(u).toMatch(/^bedrock:\/\/test\.ipc\/ping\?v=1&id=[0-9a-z]+$/)
     expect(payload).toBe(JSON.stringify({ msg: 'hello' }))
   })
 
@@ -39,7 +39,7 @@ describe('IPC', () => {
 
     expect(system.sendScriptEvent).toHaveBeenCalledTimes(1)
     const [u] = (system.sendScriptEvent as any).mock.calls[0]
-    expect(u).toMatch(/^bedrock:\/\/test\.ipc\/signal\?v=1&id=[A-F0-9]+$/)
+    expect(u).toMatch(/^bedrock:\/\/test\.ipc\/signal\?v=1&id=[0-9a-z]+$/)
   })
 
   it('receives a direct packet via on()', () => {
@@ -82,7 +82,7 @@ describe('IPC', () => {
     expect(calls.length).toBeGreaterThan(1)
 
     for (const [u] of calls) {
-      expect(u).toMatch(/^bedrock:\/\/test\.ipc\/big\?v=1&id=[A-F0-9]+&seq=\d+&total=\d+$/)
+      expect(u).toMatch(/^bedrock:\/\/test\.ipc\/big\?v=1&id=[0-9a-z]+&seq=\d+&total=\d+$/)
     }
 
     const firstPayload = calls[0][1]
@@ -148,7 +148,7 @@ describe('IPC', () => {
     ipc.send('ping', { msg: 'hello' })
 
     const sentUrl = (system.sendScriptEvent as any).mock.calls[0][0]
-    const match = sentUrl.match(/id=([A-F0-9]+)/)
+    const match = sentUrl.match(/id=(0-9a-z+)/)
     const sentId = match ? match[1] : ''
 
     simulateReceive(`bedrock://test.ipc/ping?v=1&id=${sentId}`, JSON.stringify({ msg: 'hello' }))

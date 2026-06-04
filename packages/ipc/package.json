@@ -45,6 +45,7 @@
     "@mcbe-mods/bedrock-url": "workspace:^",
     "@mcbe-mods/log": "workspace:^",
     "@mcbe-mods/protocol": "workspace:^",
+    "@mcbe-mods/utils": "workspace:^",
     "lz-string": "catalog:deps",
     "mini-emit": "catalog:deps"
   },

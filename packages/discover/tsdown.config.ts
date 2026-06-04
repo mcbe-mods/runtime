@@ -13,6 +13,7 @@ export default defineConfig({
       '@mcbe-mods/protocol',
       '@mcbe-mods/log',
       '@mcbe-mods/bedrock-url',
+      '@mcbe-mods/utils',
     ],
   },
 })

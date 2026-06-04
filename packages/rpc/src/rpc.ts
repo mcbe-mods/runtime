@@ -3,6 +3,7 @@ import type { RPCOptions } from './types'
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
+import { unique } from '@mcbe-mods/utils'
 import { system } from '@minecraft/server'
 
 const DEFAULT_OPTIONS: Required<RPCOptions> = {
@@ -13,13 +14,6 @@ const DEFAULT_OPTIONS: Required<RPCOptions> = {
 const RPC_REQ_SUFFIX = '.req.rpc'
 const RPC_RES_SUFFIX = '.res.rpc'
 const RPC_VERSION = '1'
-
-let idCounter = 0
-function generateId(): string {
-  const r = ((Math.random() * 0x100000000) >>> 0).toString(16).slice(0, 6).toUpperCase()
-  const c = (idCounter++ % 36).toString(36).toUpperCase()
-  return r + c
-}
 
 interface PendingInvoke {
   resolve: (value: unknown) => void
@@ -174,7 +168,7 @@ export class RPC {
    * @param timeout - Optional timeout in ms (overrides the instance default)
    */
   invoke<T>(method: string, data?: unknown, timeout?: number): Promise<T> {
-    const id = generateId()
+    const id = unique()
     this.#sentIds.add(id)
 
     const effectiveTimeout = timeout ?? this.#options.timeout

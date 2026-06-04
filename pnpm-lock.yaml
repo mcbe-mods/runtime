@@ -105,6 +105,9 @@ importers:
       '@mcbe-mods/protocol':
         specifier: workspace:^
         version: link:../protocol
+      '@mcbe-mods/utils':
+        specifier: workspace:^
+        version: link:../utils
     devDependencies:
       '@minecraft/server':
         specifier: 'catalog:'
@@ -130,6 +133,9 @@ importers:
       '@mcbe-mods/protocol':
         specifier: workspace:^
         version: link:../protocol
+      '@mcbe-mods/utils':
+        specifier: workspace:^
+        version: link:../utils
       lz-string:
         specifier: catalog:deps
         version: 1.5.0
@@ -211,6 +217,9 @@ importers:
       '@mcbe-mods/protocol':
         specifier: workspace:^
         version: link:../protocol
+      '@mcbe-mods/utils':
+        specifier: workspace:^
+        version: link:../utils
     devDependencies:
       '@minecraft/server':
         specifier: 'catalog:'

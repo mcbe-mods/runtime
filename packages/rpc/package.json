@@ -44,7 +44,8 @@
   "dependencies": {
     "@mcbe-mods/bedrock-url": "workspace:^",
     "@mcbe-mods/log": "workspace:^",
-    "@mcbe-mods/protocol": "workspace:^"
+    "@mcbe-mods/protocol": "workspace:^",
+    "@mcbe-mods/utils": "workspace:^"
   },
   "devDependencies": {
     "@minecraft/server": "catalog:",
