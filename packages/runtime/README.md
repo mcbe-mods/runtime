@@ -17,13 +17,14 @@ npm install @mcbe-mods/runtime
 | Source Package | Exports |
 |---------------|---------|
 | `@mcbe-mods/bedrock-url` | `BedrockURL`, `URLSearchParams` |
+| `@mcbe-mods/discover` | `Discover` |
 | `@mcbe-mods/ipc` | `Chunker`, `Compressor`, `EVENTS`, `IPC`, `PROTOCOL_VERSION` |
 | `@mcbe-mods/log` | `Log` |
 | `@mcbe-mods/protocol` | `Protocol` |
 | `@mcbe-mods/rpc` | `RPC` |
 
 ```ts
-import { IPC, Log, Protocol, RPC } from '@mcbe-mods/runtime'
+import { Discover, IPC, Log, Protocol, RPC } from '@mcbe-mods/runtime'
 ```
 
 ## License
