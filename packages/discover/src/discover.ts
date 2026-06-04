@@ -2,18 +2,12 @@ import type { DiscoverOptions, LocalRegistration, QueryEntry, RemoteEntry, Servi
 
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
+import { unique } from '@mcbe-mods/utils'
 import { system } from '@minecraft/server'
 
 const DISCOVER_VERSION = '1'
 const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
-
-let idCounter = 0
-function generateId(): string {
-  const r = ((Math.random() * 0x100000000) >>> 0).toString(16).slice(0, 6).toUpperCase()
-  const c = (idCounter++ % 36).toString(36).toUpperCase()
-  return r + c
-}
 
 function normalizeServiceType(hostname: string): string {
   return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2')
@@ -93,7 +87,7 @@ export class Discover {
     const body = JSON.stringify({ meta: metadata })
 
     const post = (): void => {
-      const nonce = generateId()
+      const nonce = unique()
       this.#sentIds.add(nonce)
       const url = `bedrock://${fullname}/?v=${DISCOVER_VERSION}&i=${nonce}`
       this.#protocol.post(url, body)

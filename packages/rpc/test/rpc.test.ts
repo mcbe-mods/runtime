@@ -27,7 +27,7 @@ describe('RPC', () => {
 
     expect(mockScriptEvent.send).toHaveBeenCalledTimes(1)
     const [url, body] = mockScriptEvent.send.mock.calls[0]
-    expect(url).toMatch(/^bedrock:\/\/test\.req\.rpc\/add\?v=1&id=[A-F0-9]+$/)
+    expect(url).toMatch(/^bedrock:\/\/test\.req\.rpc\/add\?v=1&id=[0-9a-z]+$/)
     expect(body).toBe(JSON.stringify({ a: 1, b: 2 }))
   })
 
@@ -65,7 +65,7 @@ describe('RPC', () => {
     const promise = rpc.invoke('add', { a: 1, b: 2 })
 
     const sentUrl = mockScriptEvent.send.mock.calls[0][0] as string
-    const idMatch = sentUrl.match(/id=([A-F0-9]+)/)
+    const idMatch = sentUrl.match(/id=([0-9a-z]+)/)
     const invokeId = idMatch![1]
 
     mockScriptEvent.simulateReceive(resUrl('test', 'add', invokeId), JSON.stringify({ data: 3 }))
@@ -77,7 +77,7 @@ describe('RPC', () => {
     const promise = rpc.invoke('fail')
 
     const sentUrl = mockScriptEvent.send.mock.calls[0][0] as string
-    const idMatch = sentUrl.match(/id=([A-F0-9]+)/)
+    const idMatch = sentUrl.match(/id=([0-9a-z]+)/)
     const invokeId = idMatch![1]
 
     mockScriptEvent.simulateReceive(resUrl('test', 'fail', invokeId), JSON.stringify({ error: 'something went wrong' }))
@@ -145,7 +145,7 @@ describe('RPC', () => {
     rpc.invoke('ping').catch(() => {})
 
     const sentUrl = mockScriptEvent.send.mock.calls[0][0] as string
-    const idMatch = sentUrl.match(/id=([A-F0-9]+)/)
+    const idMatch = sentUrl.match(/id=([0-9a-z]+)/)
     const invokeId = idMatch![1]
 
     mockScriptEvent.simulateReceive(reqUrl('test', 'ping', invokeId), '')

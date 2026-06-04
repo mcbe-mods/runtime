@@ -8,12 +8,12 @@ import type {
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
+import { unique } from '@mcbe-mods/utils'
 import { EventEmitter } from 'mini-emit'
 import { Chunker } from './chunk'
 import { Compressor } from './compress'
 import { PROTOCOL_VERSION } from './constants'
 import { EVENTS } from './events'
-import { generateId } from './utils'
 
 const DEFAULT_OPTIONS: Required<IPCOptions> = {
   namespace: 'global',
@@ -122,7 +122,7 @@ export class IPC {
   send<T>(channel: string, data: T): void
   send<T>(channel: string, data: T, options: SendOptions<T>): void
   send<T = never>(channel: string, data?: T, options?: SendOptions<T>): void {
-    const id = generateId()
+    const id = unique()
     this.#sentIds.add(id)
 
     const body: string = data !== undefined
