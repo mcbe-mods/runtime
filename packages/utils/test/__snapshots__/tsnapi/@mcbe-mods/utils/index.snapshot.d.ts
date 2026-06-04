@@ -35,6 +35,7 @@ export declare function getRadiusRange(_: Location, _?: number): Location[];
 export declare function getRandomProbability(_: number): boolean;
 export declare function getRandomRangeValue(_: number, _: number): number;
 export declare function splitGroups(_: number, _?: number): number[];
+export declare function unique(_?: number): string;
 // #endregion
 
 // #region Variables
