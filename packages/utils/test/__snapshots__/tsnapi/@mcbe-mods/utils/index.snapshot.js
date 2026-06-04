@@ -23,6 +23,7 @@ export function calcGameTicks(_, _, _) {}
 export function getRadiusRange(_, _) {}
 export function getRandomProbability(_) {}
 export function getRandomRangeValue(_, _) {}
+export function ms2ticks(_, _, _) {}
 export function splitGroups(_, _) {}
 // #endregion
 

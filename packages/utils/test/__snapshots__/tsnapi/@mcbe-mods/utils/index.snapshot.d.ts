@@ -34,6 +34,7 @@ export declare function calcGameTicks(_?: number, _?: number, _?: number): numbe
 export declare function getRadiusRange(_: Location, _?: number): Location[];
 export declare function getRandomProbability(_: number): boolean;
 export declare function getRandomRangeValue(_: number, _: number): number;
+export declare function ms2ticks(_?: number, _?: number, _?: number): number;
 export declare function splitGroups(_: number, _?: number): number[];
 // #endregion
 
