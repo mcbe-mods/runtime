@@ -1,7 +1,7 @@
 {
   "name": "@mcbe-mods/runtime",
   "type": "module",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "private": true,
   "packageManager": "pnpm@10.33.1",
   "description": "Monorepo for MCBE Script API runtime",
@@ -17,7 +17,7 @@
     "lint": "eslint",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
-    "release": "bumpp",
+    "release": "bumpp --recursive",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
   },
