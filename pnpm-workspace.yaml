@@ -7,6 +7,7 @@ packages:
 catalogs:
   cli:
     '@antfu/eslint-config': ^8.2.0
+    bumpp: ^11.1.0
     eslint: ^10.2.1
     lint-staged: ^16.4.0
     publint: ^0.3.18

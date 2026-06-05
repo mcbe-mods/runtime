@@ -17,11 +17,13 @@
     "lint": "eslint",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
+    "release": "bumpp",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
+    "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "lint-staged": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
