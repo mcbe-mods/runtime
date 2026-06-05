@@ -75,6 +75,9 @@ export class Discover {
   }
 
   register(type: string, meta?: Record<string, string>): () => void {
+    if (!type.endsWith('.discover')) {
+      type = `${type}.discover`
+    }
     const metadata = meta ?? {}
 
     const n = this.#nextInstanceIds.get(type) ?? 1

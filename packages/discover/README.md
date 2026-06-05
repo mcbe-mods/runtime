@@ -6,7 +6,7 @@
 
 Service discovery for Minecraft Bedrock Edition Script API.
 
-Scripts in the same world can discover each other. Pick a name ending with `.discover` for your service, and others can find it by that name.
+Scripts in the same world can discover each other. Pick a name for your service — the `.discover` suffix is automatically appended if not provided.
 
 Names support multiple levels — for example, if your addon is called `aaa` with sub-modules `chat` and `sync`, name them `chat.aaa.discover` and `sync.aaa.discover`. `query('aaa.discover')` matches everything under `aaa`, while `query('.discover')` matches all discover services in the world.
 
@@ -25,8 +25,8 @@ import { Discover } from '@mcbe-mods/discover'
 
 const discover = new Discover()
 
-// Register with any name and arbitrary metadata — command prefix, status, config, etc.
-const stop = discover.register('chat.my-addon.discover', {
+// Register with any name (.discover suffix auto-appended)
+const stop = discover.register('chat.my-addon', {
   prefix: '!',
   lang: 'zh-CN',
   version: '2.0',
