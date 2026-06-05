@@ -39,7 +39,7 @@
     "@minecraft/server": ">=1.18.0"
   },
   "devDependencies": {
-    "@minecraft/server": "catalog:",
+    "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",

@@ -50,7 +50,7 @@
     "@mcbe-mods/utils": "workspace:^"
   },
   "devDependencies": {
-    "@minecraft/server": "catalog:",
+    "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
