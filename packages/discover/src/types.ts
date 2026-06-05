@@ -14,13 +14,13 @@ export type ServiceEvent<M = Record<string, any>>
 
 export interface LocalRegistration {
   fullname: string
-  metadata: Record<string, any>
+  meta: unknown
   timer: number
 }
 
 export interface RemoteEntry {
   serviceType: string
-  meta: Record<string, any>
+  meta: unknown
   lastSeen: number
 }
 

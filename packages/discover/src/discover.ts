@@ -10,7 +10,7 @@ const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
 
 function normalizeServiceType(hostname: string): string {
-  return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2')
+  return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
 }
 
 function msToTicks(ms: number): number {
@@ -55,14 +55,18 @@ export class Discover {
       const hostname = event.url.hostname
       const serviceType = normalizeServiceType(hostname)
 
-      let meta: Record<string, any>
+      let meta: unknown
       try {
         const parsed = JSON.parse(event.message)
-        meta = (parsed && typeof parsed === 'object' && 'meta' in parsed) ? parsed.meta : {}
+        if (parsed !== null && typeof parsed === 'object' && 'meta' in parsed) {
+          meta = (parsed as Record<string, unknown>).meta
+        }
+        else {
+          meta = parsed
+        }
       }
       catch {
-        this.#log.warn(`Invalid JSON from ${hostname}: ${event.message}`)
-        return
+        meta = event.message
       }
 
       const now = Date.now()
@@ -75,24 +79,21 @@ export class Discover {
   }
 
   register<M = Record<string, any>>(type: string, meta?: M): () => void {
-    if (!type.endsWith('.discover')) {
-      type = `${type}.discover`
-    }
-    const metadata = meta ?? {}
+    const _meta = meta ?? {}
 
     const n = this.#nextInstanceIds.get(type) ?? 1
     this.#nextInstanceIds.set(type, n + 1)
 
-    const fullname = n === 1
-      ? type
-      : type.replace(/^([^.]+)/, `$1-${n}`)
+    const hostname = n === 1
+      ? `${type}.discover`
+      : `${type.replace(/^([^.]+)/, `$1-${n}`)}.discover`
 
-    const body = JSON.stringify({ meta: metadata })
+    const body = JSON.stringify({ meta: _meta })
 
     const post = (): void => {
       const nonce = unique()
       this.#sentIds.add(nonce)
-      const url = `bedrock://${fullname}/?v=${DISCOVER_VERSION}&i=${nonce}`
+      const url = `bedrock://${hostname}/?v=${DISCOVER_VERSION}&i=${nonce}`
       this.#protocol.post(url, body)
     }
 
@@ -100,19 +101,16 @@ export class Discover {
 
     const timer = system.runInterval(post, msToTicks(this.#options.heartbeatInterval))
 
-    const registration: LocalRegistration = { fullname, metadata, timer }
-    this.#localServices.set(fullname, registration)
+    const registration: LocalRegistration = { fullname: hostname, meta: _meta, timer }
+    this.#localServices.set(hostname, registration)
 
     return () => {
       system.clearRun(registration.timer)
-      this.#localServices.delete(fullname)
+      this.#localServices.delete(hostname)
     }
   }
 
   query<M = Record<string, any>>(type: string, callback: (event: ServiceEvent<M>) => void): () => void {
-    if (!type.endsWith('.discover')) {
-      type = `${type}.discover`
-    }
     const id = ++this.#queryIdCounter
     this.#queries.set(id, { type, callback })
 
@@ -153,7 +151,7 @@ export class Discover {
     }, msToTicks(1000))
   }
 
-  #notifyQueries(serviceType: string, event: ServiceEvent): void {
+  #notifyQueries(serviceType: string, event: ServiceEvent<any>): void {
     for (const query of this.#queries.values()) {
       if (serviceType.endsWith(query.type)) {
         try {
