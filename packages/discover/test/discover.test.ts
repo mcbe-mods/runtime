@@ -154,6 +154,23 @@ describe('Discover', () => {
     consumer.dispose()
   })
 
+  it('register auto-appends .discover suffix', () => {
+    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const cb = vi.fn()
+
+    provider.register('_rcon._tcp')
+    consumer.query('_rcon._tcp.discover', cb)
+
+    expect(cb).toHaveBeenCalledWith({
+      type: 'service-resolved',
+      service: { serviceType: '_rcon._tcp.discover', meta: {} },
+    })
+
+    provider.dispose()
+    consumer.dispose()
+  })
+
   it('dispose stops everything', () => {
     const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
