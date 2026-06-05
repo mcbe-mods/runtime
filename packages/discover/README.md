@@ -32,11 +32,11 @@ const stop = discover.register('chat.my-addon', {
   version: '2.0',
 })
 
-// Find a service by name
-const cancel = discover.query('my-addon', (event) => {
+// Find a service by name — pass a meta type for type-safe access
+const cancel = discover.query<{ prefix: string, lang: string, version: string }>('my-addon', (event) => {
   if (event.type === 'service-resolved') {
     console.log('Found:', event.service.serviceType)
-    console.log('Meta:', event.service.meta)
+    console.log('Meta:', event.service.meta.lang)
   }
   else if (event.type === 'service-removed') {
     console.log('Lost:', event.serviceType)
