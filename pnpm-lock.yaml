@@ -27,20 +27,19 @@ catalogs:
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
-  default:
+  deps:
     '@minecraft/server':
       specifier: ~1.18.0
       version: 1.18.0
-    tinydateformat2:
-      specifier: ^1.0.0
-      version: 1.0.0
-  deps:
     lz-string:
       specifier: ^1.5.0
       version: 1.5.0
     mini-emit:
       specifier: 1.0.0-beta.0
       version: 1.0.0-beta.0
+    tinydateformat2:
+      specifier: ^1.0.0
+      version: 1.0.0
   testing:
     tsdown-stale-guard:
       specifier: ^0.1.1
@@ -110,7 +109,7 @@ importers:
         version: link:../utils
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       tsdown:
         specifier: catalog:cli
@@ -144,7 +143,7 @@ importers:
         version: 1.0.0-beta.0
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       '@types/lz-string':
         specifier: catalog:types
@@ -171,7 +170,7 @@ importers:
   packages/log:
     dependencies:
       tinydateformat2:
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.0.0
     devDependencies:
       tsdown:
@@ -194,7 +193,7 @@ importers:
         version: link:../log
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       tsdown:
         specifier: catalog:cli
@@ -222,7 +221,7 @@ importers:
         version: link:../utils
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       tsdown:
         specifier: catalog:cli
@@ -259,7 +258,7 @@ importers:
         version: link:../utils
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       tsdown:
         specifier: catalog:cli
@@ -274,7 +273,7 @@ importers:
   packages/utils:
     devDependencies:
       '@minecraft/server':
-        specifier: 'catalog:'
+        specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)
       tsdown:
         specifier: catalog:cli

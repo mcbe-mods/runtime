@@ -38,7 +38,7 @@
     "test": "pnpm run build && vitest"
   },
   "dependencies": {
-    "tinydateformat2": "catalog:"
+    "tinydateformat2": "catalog:deps"
   },
   "devDependencies": {
     "tsdown": "catalog:cli",

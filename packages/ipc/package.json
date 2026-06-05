@@ -50,7 +50,7 @@
     "mini-emit": "catalog:deps"
   },
   "devDependencies": {
-    "@minecraft/server": "catalog:",
+    "@minecraft/server": "catalog:deps",
     "@types/lz-string": "catalog:types",
     "publint": "catalog:cli",
     "tsdown": "catalog:cli",
