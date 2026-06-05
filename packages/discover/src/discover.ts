@@ -110,6 +110,9 @@ export class Discover {
   }
 
   query(type: string, callback: (event: ServiceEvent) => void): () => void {
+    if (!type.endsWith('.discover')) {
+      type = `${type}.discover`
+    }
     const id = ++this.#queryIdCounter
     this.#queries.set(id, { type, callback })
 

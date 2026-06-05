@@ -33,7 +33,7 @@ const stop = discover.register('chat.my-addon', {
 })
 
 // Find a service by name
-const cancel = discover.query('my-addon.discover', (event) => {
+const cancel = discover.query('my-addon', (event) => {
   if (event.type === 'service-resolved') {
     console.log('Found:', event.service.serviceType)
     console.log('Meta:', event.service.meta)
