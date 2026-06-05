@@ -1,7 +1,7 @@
 {
   "name": "@mcbe-mods/utils",
   "type": "module",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "packageManager": "pnpm@10.33.1",
   "description": "Utility functions for Minecraft Bedrock Edition mod development",
   "author": "Lete114",
