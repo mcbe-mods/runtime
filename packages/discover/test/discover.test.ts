@@ -1,3 +1,4 @@
+import type { ServiceEvent } from '../src/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Discover } from '../src/discover'
 
@@ -199,5 +200,41 @@ describe('Discover', () => {
 
     vi.advanceTimersByTime(20000)
     expect(cb).not.toHaveBeenCalled()
+  })
+
+  it('meta accepts non-string values', () => {
+    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const cb = vi.fn()
+
+    provider.register('_rcon._tcp.discover', { port: 19132, secure: true, tags: ['game', 'server'] })
+    consumer.query('_tcp.discover', cb)
+
+    expect(cb).toHaveBeenCalledWith({
+      type: 'service-resolved',
+      service: { serviceType: '_rcon._tcp.discover', meta: { port: 19132, secure: true, tags: ['game', 'server'] } },
+    })
+
+    provider.dispose()
+    consumer.dispose()
+  })
+
+  it('query generic infers meta type', () => {
+    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const cb = vi.fn<(event: ServiceEvent<{ version: string }>) => void>()
+
+    provider.register('_svc._tcp.discover', { version: '1.0' })
+    consumer.query<{ version: string }>('_tcp.discover', cb)
+
+    expect(cb).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'service-resolved',
+        service: expect.objectContaining({ meta: { version: '1.0' } }),
+      }),
+    )
+
+    provider.dispose()
+    consumer.dispose()
   })
 })

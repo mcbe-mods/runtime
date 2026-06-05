@@ -55,7 +55,7 @@ export class Discover {
       const hostname = event.url.hostname
       const serviceType = normalizeServiceType(hostname)
 
-      let meta: Record<string, string>
+      let meta: Record<string, any>
       try {
         const parsed = JSON.parse(event.message)
         meta = (parsed && typeof parsed === 'object' && 'meta' in parsed) ? parsed.meta : {}
@@ -74,7 +74,7 @@ export class Discover {
     this.#startTtlTimer()
   }
 
-  register(type: string, meta?: Record<string, string>): () => void {
+  register<M = Record<string, any>>(type: string, meta?: M): () => void {
     if (!type.endsWith('.discover')) {
       type = `${type}.discover`
     }
@@ -109,7 +109,7 @@ export class Discover {
     }
   }
 
-  query(type: string, callback: (event: ServiceEvent) => void): () => void {
+  query<M = Record<string, any>>(type: string, callback: (event: ServiceEvent<M>) => void): () => void {
     if (!type.endsWith('.discover')) {
       type = `${type}.discover`
     }
@@ -118,7 +118,7 @@ export class Discover {
 
     for (const entry of this.#remoteCache.values()) {
       if (entry.serviceType.endsWith(type)) {
-        callback({ type: 'service-resolved', service: { serviceType: entry.serviceType, meta: entry.meta } })
+        callback({ type: 'service-resolved', service: { serviceType: entry.serviceType, meta: entry.meta } } as ServiceEvent<M>)
       }
     }
 

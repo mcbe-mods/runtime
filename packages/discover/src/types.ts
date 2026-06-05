@@ -3,28 +3,28 @@ export interface DiscoverOptions {
   ttl?: number
 }
 
-export interface ResolvedService {
+export interface ResolvedService<M = Record<string, any>> {
   serviceType: string
-  meta: Record<string, string>
+  meta: M
 }
 
-export type ServiceEvent
-  = { type: 'service-resolved', service: ResolvedService }
+export type ServiceEvent<M = Record<string, any>>
+  = { type: 'service-resolved', service: ResolvedService<M> }
     | { type: 'service-removed', serviceType: string }
 
 export interface LocalRegistration {
   fullname: string
-  metadata: Record<string, string>
+  metadata: Record<string, any>
   timer: number
 }
 
 export interface RemoteEntry {
   serviceType: string
-  meta: Record<string, string>
+  meta: Record<string, any>
   lastSeen: number
 }
 
 export interface QueryEntry {
   type: string
-  callback: (event: ServiceEvent) => void
+  callback: (event: ServiceEvent<any>) => void
 }
