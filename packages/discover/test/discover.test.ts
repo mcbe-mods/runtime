@@ -13,15 +13,15 @@ describe('Discover', () => {
 
   it('registers and sends heartbeat', () => {
     const d = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    const stop = d.register('_rcon._tcp.discover', { port: '19132' })
+    const stop = d.register('_rcon._tcp', { port: '19132' })
     stop()
     d.dispose()
   })
 
   it('duplicate register creates numbered instances', () => {
     const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    provider.register('_svc._tcp.discover', { id: '1' })
-    provider.register('_svc._tcp.discover', { id: '2' })
+    provider.register('_svc._tcp', { id: '1' })
+    provider.register('_svc._tcp', { id: '2' })
     provider.dispose()
   })
 
@@ -30,12 +30,12 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    provider.register('_rcon._tcp.discover', { port: '19132' })
-    consumer.query('_tcp.discover', cb)
+    provider.register('_rcon._tcp', { port: '19132' })
+    consumer.query('_tcp', cb)
 
     expect(cb).toHaveBeenCalledWith({
       type: 'service-resolved',
-      service: { serviceType: '_rcon._tcp.discover', meta: { port: '19132' } },
+      service: { serviceType: '_rcon._tcp', meta: { port: '19132' } },
     })
 
     provider.dispose()
@@ -47,24 +47,24 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    provider.register('_rcon._tcp.discover')
-    consumer.query('_other._tcp.discover', cb)
+    provider.register('_rcon._tcp')
+    consumer.query('_other._tcp', cb)
 
     expect(cb).not.toHaveBeenCalled()
     provider.dispose()
     consumer.dispose()
   })
 
-  it('suffix matching: .discover matches everything', () => {
+  it('suffix matching works', () => {
     const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    provider.register('_a._tcp.discover')
-    provider.register('_b._udp.discover')
-    consumer.query('.discover', cb)
+    provider.register('_a._tcp')
+    provider.register('_b._udp')
+    consumer.query('_tcp', cb)
 
-    expect(cb).toHaveBeenCalledTimes(2)
+    expect(cb).toHaveBeenCalledOnce()
     provider.dispose()
     consumer.dispose()
   })
@@ -74,8 +74,8 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    const stop = consumer.query('.discover', cb)
-    provider.register('_x._tcp.discover')
+    const stop = consumer.query('_x._tcp', cb)
+    provider.register('_x._tcp')
     cb.mockClear()
     stop()
 
@@ -88,8 +88,8 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    consumer.query('.discover', cb)
-    provider.register('_rcon._tcp.discover', { port: '19132' })
+    consumer.query('_rcon._tcp', cb)
+    provider.register('_rcon._tcp', { port: '19132' })
     cb.mockClear()
 
     provider.dispose()
@@ -98,7 +98,7 @@ describe('Discover', () => {
 
     expect(cb).toHaveBeenCalledWith({
       type: 'service-removed',
-      serviceType: '_rcon._tcp.discover',
+      serviceType: '_rcon._tcp',
     })
 
     consumer.dispose()
@@ -109,8 +109,8 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    consumer.query('.discover', cb)
-    provider.register('_rcon._tcp.discover', { port: '19132' })
+    consumer.query('_rcon._tcp', cb)
+    provider.register('_rcon._tcp', { port: '19132' })
     cb.mockClear()
 
     vi.advanceTimersByTime(14000)
@@ -128,9 +128,9 @@ describe('Discover', () => {
     const cb1 = vi.fn()
     const cb2 = vi.fn()
 
-    consumer.query('_tcp.discover', cb1)
-    consumer.query('.discover', cb2)
-    provider.register('_svc._tcp.discover')
+    consumer.query('_tcp', cb1)
+    consumer.query('_svc._tcp', cb2)
+    provider.register('_svc._tcp')
 
     expect(cb1).toHaveBeenCalledOnce()
     expect(cb2).toHaveBeenCalledOnce()
@@ -144,43 +144,12 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    provider.register('_svc.discover', { i: '1' })
-    provider.register('_svc.discover', { i: '2' })
-    provider.register('_svc.discover', { i: '3' })
-    consumer.query('.discover', cb)
+    provider.register('_svc', { i: '1' })
+    provider.register('_svc', { i: '2' })
+    provider.register('_svc', { i: '3' })
+    consumer.query('_svc', cb)
 
     expect(cb).toHaveBeenCalledTimes(3)
-
-    provider.dispose()
-    consumer.dispose()
-  })
-
-  it('query auto-appends .discover suffix', () => {
-    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    const cb = vi.fn()
-
-    provider.register('_rcon._tcp.discover')
-    consumer.query('_tcp', cb)
-
-    expect(cb).toHaveBeenCalledOnce()
-
-    provider.dispose()
-    consumer.dispose()
-  })
-
-  it('register auto-appends .discover suffix', () => {
-    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
-    const cb = vi.fn()
-
-    provider.register('_rcon._tcp')
-    consumer.query('_rcon._tcp.discover', cb)
-
-    expect(cb).toHaveBeenCalledWith({
-      type: 'service-resolved',
-      service: { serviceType: '_rcon._tcp.discover', meta: {} },
-    })
 
     provider.dispose()
     consumer.dispose()
@@ -191,8 +160,8 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    consumer.query('.discover', cb)
-    provider.register('_test._tcp.discover', { x: '1' })
+    consumer.query('_test._tcp', cb)
+    provider.register('_test._tcp', { x: '1' })
     cb.mockClear()
 
     provider.dispose()
@@ -207,12 +176,12 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn()
 
-    provider.register('_rcon._tcp.discover', { port: 19132, secure: true, tags: ['game', 'server'] })
-    consumer.query('_tcp.discover', cb)
+    provider.register('_rcon._tcp', { port: 19132, secure: true, tags: ['game', 'server'] })
+    consumer.query('_tcp', cb)
 
     expect(cb).toHaveBeenCalledWith({
       type: 'service-resolved',
-      service: { serviceType: '_rcon._tcp.discover', meta: { port: 19132, secure: true, tags: ['game', 'server'] } },
+      service: { serviceType: '_rcon._tcp', meta: { port: 19132, secure: true, tags: ['game', 'server'] } },
     })
 
     provider.dispose()
@@ -224,14 +193,46 @@ describe('Discover', () => {
     const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
     const cb = vi.fn<(event: ServiceEvent<{ version: string }>) => void>()
 
-    provider.register('_svc._tcp.discover', { version: '1.0' })
-    consumer.query<{ version: string }>('_tcp.discover', cb)
+    provider.register('_svc._tcp', { version: '1.0' })
+    consumer.query<{ version: string }>('_tcp', cb)
 
     expect(cb).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'service-resolved',
         service: expect.objectContaining({ meta: { version: '1.0' } }),
       }),
+    )
+
+    provider.dispose()
+    consumer.dispose()
+  })
+
+  it('meta can be a string', () => {
+    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const cb = vi.fn()
+
+    provider.register('_svc._tcp', 'hello')
+    consumer.query('_svc._tcp', cb)
+
+    expect(cb).toHaveBeenCalledWith(
+      expect.objectContaining({ service: expect.objectContaining({ meta: 'hello' }) }),
+    )
+
+    provider.dispose()
+    consumer.dispose()
+  })
+
+  it('meta can be a number', () => {
+    const provider = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const consumer = new Discover({ heartbeatInterval: 5000, ttl: 15000 })
+    const cb = vi.fn()
+
+    provider.register('_svc._tcp', 42)
+    consumer.query('_svc._tcp', cb)
+
+    expect(cb).toHaveBeenCalledWith(
+      expect.objectContaining({ service: expect.objectContaining({ meta: 42 }) }),
     )
 
     provider.dispose()
