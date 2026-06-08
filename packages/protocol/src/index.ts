@@ -1,2 +1,2 @@
 export { Protocol } from './protocol'
-export type { BedrockReceiveEvent } from './protocol'
+export type { BedrockReceiveEvent, ProtocolCipher, ProtocolOptions } from './protocol'
