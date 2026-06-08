@@ -1,12 +1,12 @@
 {
-  "name": "@mcbe-mods/runtime",
+  "name": "@mcbe-mods/crypto",
   "type": "module",
   "version": "1.0.0-beta.3",
   "publishConfig": {
     "access": "public"
   },
   "packageManager": "pnpm@10.33.1",
-  "description": "Unified entry point for MCBE Script API runtime",
+  "description": "Symmetric encryption for MCBE Script API — XChaCha20-Poly1305 with password/key support",
   "author": "Lete114",
   "license": "MIT",
   "homepage": "https://github.com/mcbe-mods/runtime#readme",
@@ -18,9 +18,12 @@
   "keywords": [
     "minecraft",
     "mcbe",
-    "runtime",
-    "script-api",
-    "bedrock"
+    "crypto",
+    "encryption",
+    "xchacha20",
+    "poly1305",
+    "bedrock",
+    "script-api"
   ],
   "sideEffects": false,
   "exports": {
@@ -37,23 +40,20 @@
     "prepublishOnly": "pnpm build",
     "test": "pnpm run build && vitest"
   },
-  "peerDependencies": {
-    "@minecraft/server": ">=1.18.0"
-  },
   "dependencies": {
-    "@mcbe-mods/bedrock-url": "workspace:^",
-    "@mcbe-mods/crypto": "workspace:^",
-    "@mcbe-mods/discover": "workspace:^",
-    "@mcbe-mods/ipc": "workspace:^",
-    "@mcbe-mods/log": "workspace:^",
-    "@mcbe-mods/protocol": "workspace:^",
-    "@mcbe-mods/rpc": "workspace:^",
-    "@mcbe-mods/utils": "workspace:^"
+    "@mcbe-mods/utils": "workspace:^",
+    "@noble/ciphers": "catalog:deps",
+    "@noble/hashes": "catalog:deps"
   },
   "devDependencies": {
-    "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
+    "tsdown-stale-guard": "catalog:testing",
+    "tsnapi": "catalog:testing",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
+  },
+  "inlinedDependencies": {
+    "@noble/ciphers": "2.2.0",
+    "@noble/hashes": "2.2.0"
   }
 }

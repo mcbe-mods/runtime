@@ -9,6 +9,7 @@ Monorepo for Minecraft Bedrock Edition Script API runtime packages.
 | Package | Description |
 |---------|-------------|
 | [`@mcbe-mods/bedrock-url`](./packages/bedrock-url) | `bedrock://` URI parser — zero dependencies |
+| [`@mcbe-mods/crypto`](./packages/crypto) | XChaCha20-Poly1305 symmetric encryption — password/key with QuickJS support |
 | [`@mcbe-mods/discover`](./packages/discover) | Service discovery — heartbeat-based in-world registry |
 | [`@mcbe-mods/ipc`](./packages/ipc) | Inter-Pack Communication — fire-and-forget messaging with chunking and compression |
 | [`@mcbe-mods/log`](./packages/log) | Level-based logging with lazy evaluation and timestamps |

@@ -34,6 +34,12 @@ catalogs:
     '@minecraft/server':
       specifier: ~1.18.0
       version: 1.18.0
+    '@noble/ciphers':
+      specifier: ^2.2.0
+      version: 2.2.0
+    '@noble/hashes':
+      specifier: ^2.1.0
+      version: 2.2.0
     lz-string:
       specifier: ^1.5.0
       version: 1.5.0
@@ -92,6 +98,34 @@ importers:
       tsdown:
         specifier: catalog:cli
         version: 0.21.10(publint@0.3.21)(synckit@0.11.12)(typescript@6.0.3)
+      typescript:
+        specifier: catalog:cli
+        version: 6.0.3
+      vitest:
+        specifier: catalog:testing
+        version: 4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0))
+
+  packages/crypto:
+    dependencies:
+      '@mcbe-mods/utils':
+        specifier: workspace:^
+        version: link:../utils
+      '@noble/ciphers':
+        specifier: catalog:deps
+        version: 2.2.0
+      '@noble/hashes':
+        specifier: catalog:deps
+        version: 2.2.0
+    devDependencies:
+      tsdown:
+        specifier: catalog:cli
+        version: 0.21.10(publint@0.3.21)(synckit@0.11.12)(typescript@6.0.3)
+      tsdown-stale-guard:
+        specifier: catalog:testing
+        version: 0.1.2(tsdown@0.21.10(publint@0.3.21)(synckit@0.11.12)(typescript@6.0.3))
+      tsnapi:
+        specifier: catalog:testing
+        version: 0.3.3(vitest@4.1.6(@types/node@25.8.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.0)(yaml@2.9.0)))
       typescript:
         specifier: catalog:cli
         version: 6.0.3
@@ -244,6 +278,9 @@ importers:
       '@mcbe-mods/bedrock-url':
         specifier: workspace:^
         version: link:../bedrock-url
+      '@mcbe-mods/crypto':
+        specifier: workspace:^
+        version: link:../crypto
       '@mcbe-mods/discover':
         specifier: workspace:^
         version: link:../discover
@@ -713,6 +750,14 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
+  '@noble/ciphers@2.2.0':
+    resolution: {integrity: sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==}
+    engines: {node: '>= 20.19.0'}
+
+  '@noble/hashes@2.2.0':
+    resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
+    engines: {node: '>= 20.19.0'}
+
   '@ota-meshi/ast-token-store@0.3.0':
     resolution: {integrity: sha512-XRO0zi2NIUKq2lUk3T1ecFSld1fMWRKE6naRFGkgkdeosx7IslyUKNv5Dcb5PJTja9tHJoFu0v/7yEpAkrkrTg==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
@@ -1059,14 +1104,12 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-gnu@1.0.1':
     resolution: {integrity: sha512-QoSx2EkyrrdZ6kcyE8stqZ62t0Yra8Fs5ia9lOxJrh6TMQJK7gQKmscdTHf7pOXKREKrVwOtJcQG3qVSfc866A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-musl@1.0.0-rc.17':
     resolution: {integrity: sha512-b/CgbwAJpmrRLp02RPfhbudf5tZnN9nsPWK82znefso832etkem8H7FSZwxrOI9djcdTP7U6YfNhbRnh7djErg==}
@@ -3180,6 +3223,10 @@ snapshots:
       '@emnapi/runtime': 1.9.2
       '@tybys/wasm-util': 0.10.2
     optional: true
+
+  '@noble/ciphers@2.2.0': {}
+
+  '@noble/hashes@2.2.0': {}
 
   '@ota-meshi/ast-token-store@0.3.0': {}
 
