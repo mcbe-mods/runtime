@@ -16,6 +16,11 @@ export type Stylizer = {
 // #endregion
 
 // #region Classes
+export declare class Base64 {
+  #private;
+  static encode(_: string): string;
+  static decode(_: string): string;
+}
 export declare class Experience {
   #private;
   getTotalXP(): number;
