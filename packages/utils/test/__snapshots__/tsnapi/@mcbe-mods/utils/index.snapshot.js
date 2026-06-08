@@ -5,8 +5,14 @@
 export class Base64 {
   static CHARS
   static REVERSE
+  static utf8Bytes(_) {}
+  static bytesUtf8(_) {}
+  static toBase64(_) {}
+  static fromBase64(_) {}
   static encode(_) {}
   static decode(_) {}
+  static fromBytes(_) {}
+  static toBytes(_) {}
 }
 export class Experience {
   level

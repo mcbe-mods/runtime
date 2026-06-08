@@ -20,6 +20,8 @@ export declare class Base64 {
   #private;
   static encode(_: string): string;
   static decode(_: string): string;
+  static fromBytes(_: Uint8Array): string;
+  static toBytes(_: string): Uint8Array;
 }
 export declare class Experience {
   #private;
