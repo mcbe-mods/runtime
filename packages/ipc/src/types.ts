@@ -1,3 +1,5 @@
+import type { ProtocolCipher } from '@mcbe-mods/protocol'
+
 /** Custom serialization — transforms complex data into a string for transport */
 export interface Serializer<T> {
   /** @returns The string representation of `value` */
@@ -47,4 +49,10 @@ export interface IPCOptions {
    * before being discarded. 0 disables timeout. @default 30_000
    */
   chunkTimeout?: number
+  /**
+   * Optional cipher for encrypting/decrypting protocol messages.
+   * If provided, all IPC messages will be encrypted at the transport layer.
+   * @see ProtocolCipher
+   */
+  cipher?: ProtocolCipher
 }

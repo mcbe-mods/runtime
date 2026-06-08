@@ -6,7 +6,9 @@ import { Protocol } from '@mcbe-mods/protocol'
 import { unique } from '@mcbe-mods/utils'
 import { system } from '@minecraft/server'
 
-const DEFAULT_OPTIONS: Required<RPCOptions> = {
+type DefaultedRPCOptions = Required<Omit<RPCOptions, 'cipher'>> & Pick<RPCOptions, 'cipher'>
+
+const DEFAULT_OPTIONS: DefaultedRPCOptions = {
   namespace: 'global',
   timeout: 5000,
 }
@@ -39,7 +41,7 @@ interface PendingInvoke {
  * ```
  */
 export class RPC {
-  readonly #options: Required<RPCOptions>
+  readonly #options: DefaultedRPCOptions
   readonly #protocol: Protocol
   readonly #log: Log
   readonly #pending = new Map<string, PendingInvoke>()
@@ -53,7 +55,7 @@ export class RPC {
    */
   constructor(options: RPCOptions = {}) {
     this.#options = { ...DEFAULT_OPTIONS, ...options }
-    this.#protocol = new Protocol()
+    this.#protocol = new Protocol({ cipher: options.cipher })
     this.#log = new Log(`RPC:${this.#options.namespace}`)
 
     this.#unsubscribe = this.#protocol.onReceive((event) => {
