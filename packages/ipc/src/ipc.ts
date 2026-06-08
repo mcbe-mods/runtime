@@ -15,7 +15,9 @@ import { Compressor } from './compress'
 import { PROTOCOL_VERSION } from './constants'
 import { EVENTS } from './events'
 
-const DEFAULT_OPTIONS: Required<IPCOptions> = {
+type DefaultedIPCOptions = Required<Omit<IPCOptions, 'cipher'>> & Pick<IPCOptions, 'cipher'>
+
+const DEFAULT_OPTIONS: DefaultedIPCOptions = {
   namespace: 'global',
   chunkSize: 1800,
   compressThreshold: 800,
@@ -41,7 +43,7 @@ const IPC_HOST_SUFFIX = '.ipc'
  * ```
  */
 export class IPC {
-  readonly #options: Required<IPCOptions>
+  readonly #options: DefaultedIPCOptions
   readonly #protocol: Protocol
   readonly #log: Log
   readonly #compressor: Compressor
@@ -63,7 +65,7 @@ export class IPC {
    */
   constructor(options: IPCOptions = {}) {
     this.#options = { ...DEFAULT_OPTIONS, ...options }
-    this.#protocol = new Protocol()
+    this.#protocol = new Protocol({ cipher: options.cipher })
     this.#log = new Log(`IPC:${this.#options.namespace}`)
     this.#compressor = new Compressor(this.#options.compressThreshold)
     this.#chunker = new Chunker(this.#options.chunkSize)

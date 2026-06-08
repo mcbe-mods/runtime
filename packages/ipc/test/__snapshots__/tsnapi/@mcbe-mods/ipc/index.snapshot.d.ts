@@ -14,6 +14,7 @@ export interface IPCOptions {
   compressThreshold?: number;
   maxPacketSize?: number;
   chunkTimeout?: number;
+  cipher?: ProtocolCipher;
 }
 export interface OnOptions<T = never> {
   deserializer?: Deserializer<T>;
