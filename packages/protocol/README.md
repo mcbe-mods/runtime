@@ -16,6 +16,8 @@ npm install @mcbe-mods/protocol
 
 ## Usage
 
+### Plain text
+
 ```ts
 import { Protocol } from '@mcbe-mods/protocol'
 
@@ -36,6 +38,35 @@ protocol.get('bedrock://my-addon/ping')
 unsubscribe()
 protocol.dispose()
 ```
+
+### Encrypted
+
+```ts
+import { Protocol } from '@mcbe-mods/protocol'
+
+// Pass any encrypt/decrypt function pair (pure JS required — no atob/btoa in QuickJS)
+const protocol = new Protocol({
+  cipher: {
+    encrypt(s: string) {
+      return [...s].map(c => (c.charCodeAt(0) ^ 0x55).toString(16).padStart(2, '0')).join('')
+    },
+    decrypt(s: string) {
+      return String.fromCharCode(...s.match(/.{2}/g)!.map(b => Number.parseInt(b, 16) ^ 0x55))
+    },
+  },
+})
+
+protocol.post('bedrock://secret/cmd', 'hello') // automatically encrypted
+protocol.onReceive((event) => {
+  event.message // automatically decrypted
+})
+```
+
+The `cipher` interface is protocol-agnostic — you can use any pure-JS encryption library
+(such as `@noble/ciphers`, tweetnacl, or your own implementation).
+
+Messages that fail decryption are silently dropped, preventing untrusted scripts
+in the same world from injecting forged payloads.
 
 ## License
 

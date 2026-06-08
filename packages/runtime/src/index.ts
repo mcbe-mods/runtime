@@ -6,7 +6,7 @@ export type { Deserializer, IPCEvents, IPCOptions, OnOptions, SendOptions, Seria
 export { Log } from '@mcbe-mods/log'
 export type { LogLevel, LogOptions } from '@mcbe-mods/log'
 export { Protocol } from '@mcbe-mods/protocol'
-export type { BedrockReceiveEvent } from '@mcbe-mods/protocol'
+export type { BedrockReceiveEvent, ProtocolCipher, ProtocolOptions } from '@mcbe-mods/protocol'
 export { RPC } from '@mcbe-mods/rpc'
 export type { RPCOptions } from '@mcbe-mods/rpc'
 export * from '@mcbe-mods/utils'

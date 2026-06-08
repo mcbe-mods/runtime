@@ -1,3 +1,4 @@
+import type { ProtocolCipher } from '../src/index'
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Protocol } from '../src/index'
@@ -9,6 +10,53 @@ describe('Protocol', () => {
   beforeEach(() => {
     protocol = new Protocol()
     vi.clearAllMocks()
+  })
+
+  describe('constructor with cipher', () => {
+    it('encrypts outgoing messages via post', () => {
+      const cipher: ProtocolCipher = {
+        encrypt: (s: string) => `enc(${s})`,
+        decrypt: (s: string) => s.replace(/^enc\(|\)$/g, ''),
+      }
+      const encrypted = new Protocol({ cipher })
+      encrypted.post('bedrock://host/path', 'hello')
+      expect(mockScriptEvent.send).toHaveBeenCalledWith('bedrock://host/path', 'enc(hello)')
+    })
+
+    it('decrypts incoming messages via onReceive', () => {
+      const cipher: ProtocolCipher = {
+        encrypt: (s: string) => `enc(${s})`,
+        decrypt: (s: string) => s.replace(/^enc\(|\)$/g, ''),
+      }
+      const handler = vi.fn()
+      const encrypted = new Protocol({ cipher })
+      encrypted.onReceive(handler)
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'enc(hello)')
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler.mock.calls[0][0].message).toBe('hello')
+    })
+
+    it('drops messages when decryption fails', () => {
+      const cipher: ProtocolCipher = {
+        encrypt: (s: string) => s,
+        decrypt: () => { throw new Error('bad decrypt') },
+      }
+      const handler = vi.fn()
+      const encrypted = new Protocol({ cipher })
+      encrypted.onReceive(handler)
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'tampered')
+      expect(handler).not.toHaveBeenCalled()
+    })
+
+    it('passes through get unchanged', () => {
+      const cipher: ProtocolCipher = {
+        encrypt: (s: string) => `enc(${s})`,
+        decrypt: (s: string) => s,
+      }
+      const encrypted = new Protocol({ cipher })
+      encrypted.get('bedrock://host/path')
+      expect(mockScriptEvent.send).toHaveBeenCalledWith('bedrock://host/path', '')
+    })
   })
 
   describe('get', () => {
