@@ -210,4 +210,31 @@ describe('IPC', () => {
 
     expect(handler).not.toHaveBeenCalled()
   })
+
+  describe('cipher', () => {
+    const cipher = {
+      encrypt: (s: string) => `enc(${s})`,
+      decrypt: (s: string) => s.replace(/^enc\(|\)$/g, ''),
+    }
+
+    it('encrypts outgoing payloads via send()', () => {
+      const encIPC = new IPC({ namespace: 'test', cipher })
+      encIPC.send('ping', { msg: 'hello' })
+
+      const payload = (system.sendScriptEvent as any).mock.calls[0][1]
+      expect(payload).toBe(`enc(${JSON.stringify({ msg: 'hello' })})`)
+    })
+
+    it('decrypts incoming payloads via on()', () => {
+      const encIPC = new IPC({ namespace: 'test', cipher })
+      const handler = vi.fn()
+      encIPC.on<{ msg: string }>('ping', handler)
+
+      const encrypted = `enc(${JSON.stringify({ msg: 'hello' })})`
+      simulateReceive(url('ping'), encrypted)
+
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler).toHaveBeenCalledWith({ msg: 'hello' })
+    })
+  })
 })

@@ -180,4 +180,31 @@ describe('RPC', () => {
 
     expect(handler).not.toHaveBeenCalled()
   })
+
+  describe('cipher', () => {
+    const cipher = {
+      encrypt: (s: string) => `enc(${s})`,
+      decrypt: (s: string) => s.replace(/^enc\(|\)$/g, ''),
+    }
+
+    it('encrypts outgoing request body via invoke()', () => {
+      const encRPC = new RPC({ namespace: 'test', cipher })
+      encRPC.invoke('add', { a: 1 }).catch(() => {})
+
+      const [, body] = mockScriptEvent.send.mock.calls[0]
+      expect(body).toBe(`enc(${JSON.stringify({ a: 1 })})`)
+    })
+
+    it('decrypts incoming request body for handle()', () => {
+      const encRPC = new RPC({ namespace: 'test', cipher })
+      const handler = vi.fn()
+      encRPC.handle('add', handler)
+
+      const encrypted = `enc(${JSON.stringify({ a: 1 })})`
+      mockScriptEvent.simulateReceive(reqUrl('test', 'add', 'REQ1'), encrypted)
+
+      expect(handler).toHaveBeenCalledTimes(1)
+      expect(handler).toHaveBeenCalledWith({ a: 1 })
+    })
+  })
 })
