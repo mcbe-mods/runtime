@@ -1,4 +1,4 @@
-import { Base64 } from '@mcbe-mods/utils'
+import { Base64, utf8Decode, utf8Encode } from '@mcbe-mods/utils'
 import { xchacha20poly1305 } from '@noble/ciphers/chacha.js'
 import { managedNonce } from '@noble/ciphers/utils.js'
 import { pbkdf2 } from '@noble/hashes/pbkdf2.js'
@@ -6,29 +6,6 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 const KEY_LENGTH = 32
 const ITERATIONS = 100_000
-
-function utf8Encode(s: string): Uint8Array {
-  const encoded = encodeURIComponent(s)
-  const bytes: number[] = []
-  for (let i = 0; i < encoded.length; i++) {
-    if (encoded[i] === '%') {
-      bytes.push(Number.parseInt(encoded[i + 1] + encoded[i + 2], 16))
-      i += 2
-    }
-    else {
-      bytes.push(encoded.charCodeAt(i))
-    }
-  }
-  return new Uint8Array(bytes)
-}
-
-function utf8Decode(bytes: Uint8Array): string {
-  let s = ''
-  for (const b of bytes) {
-    s += `%${b.toString(16).padStart(2, '0').toUpperCase()}`
-  }
-  return decodeURIComponent(s)
-}
 
 export class Cipher {
   readonly #impl: { encrypt: (data: Uint8Array) => Uint8Array, decrypt: (data: Uint8Array) => Uint8Array }

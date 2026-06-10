@@ -1,29 +1,8 @@
+import { utf8Decode, utf8Encode } from './textCodec'
+
 export class Base64 {
   static #CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
   static #REVERSE = Object.fromEntries([...Base64.#CHARS].map((c, i) => [c.charCodeAt(0), i]))
-
-  static #utf8Bytes(s: string): Uint8Array {
-    const encoded = encodeURIComponent(s)
-    const bytes: number[] = []
-    for (let i = 0; i < encoded.length; i++) {
-      if (encoded[i] === '%') {
-        bytes.push(Number.parseInt(encoded[i + 1] + encoded[i + 2], 16))
-        i += 2
-      }
-      else {
-        bytes.push(encoded.charCodeAt(i))
-      }
-    }
-    return new Uint8Array(bytes)
-  }
-
-  static #bytesUtf8(bytes: Uint8Array): string {
-    let s = ''
-    for (const b of bytes) {
-      s += `%${b.toString(16).padStart(2, '0').toUpperCase()}`
-    }
-    return decodeURIComponent(s)
-  }
 
   static #toBase64(bytes: Uint8Array): string {
     let result = ''
@@ -57,11 +36,11 @@ export class Base64 {
   }
 
   static encode(input: string): string {
-    return Base64.#toBase64(Base64.#utf8Bytes(input))
+    return Base64.#toBase64(utf8Encode(input))
   }
 
   static decode(input: string): string {
-    return Base64.#bytesUtf8(Base64.#fromBase64(input))
+    return utf8Decode(Base64.#fromBase64(input))
   }
 
   static fromBytes(bytes: Uint8Array): string {
