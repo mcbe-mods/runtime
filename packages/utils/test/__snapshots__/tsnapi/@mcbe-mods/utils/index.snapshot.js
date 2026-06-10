@@ -5,8 +5,6 @@
 export class Base64 {
   static CHARS
   static REVERSE
-  static utf8Bytes(_) {}
-  static bytesUtf8(_) {}
   static toBase64(_) {}
   static fromBase64(_) {}
   static encode(_) {}
@@ -38,6 +36,8 @@ export function getRandomRangeValue(_, _) {}
 export function ms2ticks(_, _, _) {}
 export function splitGroups(_, _) {}
 export function unique(_) {}
+export function utf8Decode(_) {}
+export function utf8Encode(_) {}
 // #endregion
 
 // #region Variables
