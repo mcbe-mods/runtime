@@ -70,6 +70,7 @@ rpc.dispose()
 interface RPCOptions {
   namespace?: string // default: 'global'
   timeout?: number // default: 5000 (ms), 0 to disable
+  cipher?: ProtocolCipher // transport-layer encryption
 }
 ```
 

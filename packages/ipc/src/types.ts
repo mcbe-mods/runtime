@@ -40,7 +40,7 @@ export interface IPCOptions {
    * @default 1800
    */
   chunkSize?: number
-  /** Raw JSON payloads larger than this will be compressed with lz-string before sending. @default 800 */
+  /** Raw JSON payloads larger than this will be compressed with deflate before sending. @default 800 */
   compressThreshold?: number
   /** Maximum allowed serialized packet body size in characters. Throws if exceeded. @default 1_000_000 */
   maxPacketSize?: number

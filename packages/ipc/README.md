@@ -7,7 +7,7 @@
 
 Inter-Pack Communication for Minecraft Bedrock Edition Script API.
 
-Fire-and-forget messaging with automatic chunking and LZ-String compression.
+Fire-and-forget messaging with automatic chunking and deflate compression via fflate.
 
 ## Install
 
@@ -62,6 +62,7 @@ interface IPCOptions {
   compressThreshold?: number // default: 800 (compress payloads above this)
   maxPacketSize?: number // default: 1_000_000
   chunkTimeout?: number // default: 30_000 (ms)
+  cipher?: ProtocolCipher // transport-layer encryption
 }
 ```
 

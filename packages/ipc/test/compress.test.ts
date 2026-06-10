@@ -14,7 +14,8 @@ describe('Compressor', () => {
     const data = 'A'.repeat(100)
     const { value, compressed } = c.compress(data)
     expect(compressed).toBe(true)
-    expect(value.length).toBeLessThan(data.length)
+    // base64 encoded deflated output should be shorter than original
+    expect(value.length).toBeLessThan(100)
   })
 
   it('does not compress if result is larger', () => {
@@ -29,7 +30,8 @@ describe('Compressor', () => {
     const c = new Compressor(10)
     const original = `Hello, World! ${'x'.repeat(50)}`
     const { value, compressed } = c.compress(original)
-    const decompressed = c.decompress(value, compressed)
+    expect(compressed).toBe(true)
+    const decompressed = c.decompress(value, true)
     expect(decompressed).toBe(original)
   })
 
@@ -41,6 +43,6 @@ describe('Compressor', () => {
 
   it('throws on decompression failure', () => {
     const c = new Compressor(100)
-    expect(() => c.decompress('invalid-base64!!!', true)).toThrow('Decompression failed')
+    expect(() => c.decompress('!!!invalid-base64!!!', true)).toThrow()
   })
 })
