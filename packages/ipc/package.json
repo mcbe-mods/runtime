@@ -46,12 +46,11 @@
     "@mcbe-mods/log": "workspace:^",
     "@mcbe-mods/protocol": "workspace:^",
     "@mcbe-mods/utils": "workspace:^",
-    "lz-string": "catalog:deps",
+    "fflate": "catalog:deps",
     "mini-emit": "catalog:deps"
   },
   "devDependencies": {
     "@minecraft/server": "catalog:deps",
-    "@types/lz-string": "catalog:types",
     "publint": "catalog:cli",
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
@@ -60,7 +59,7 @@
     "vitest": "catalog:testing"
   },
   "inlinedDependencies": {
-    "lz-string": "1.5.0",
+    "fflate": "0.8.3",
     "mini-emit": "1.0.0-beta.0"
   }
 }

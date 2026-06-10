@@ -33,7 +33,8 @@ const IPC_HOST_SUFFIX = '.ipc'
  * Built on top of bedrock:// protocol, supports:
  * - Fire-and-forget messaging (`send` / `on`)
  * - Automatic chunking of large payloads
- * - Optional LZ-String compression
+ * - Optional compression via fflate
+ * - Optional encryption via ProtocolCipher
  *
  * @example
  * ```ts
@@ -209,26 +210,20 @@ export class IPC {
 
     const { value, compressed } = this.#compressor.compress(body)
     const baseParams: Record<string, string> = { v: PROTOCOL_VERSION, id }
+    if (compressed) {
+      baseParams.c = '1'
+    }
 
     if (value.length <= this.#options.chunkSize) {
-      if (compressed) {
-        baseParams.c = '1'
-      }
       this.#protocol.post(this.#channelUrl(channel, baseParams), value)
       return
     }
 
-    const chunks = this.#chunker.split(value)
-    for (const chunk of chunks) {
-      const params: Record<string, string> = {
-        ...baseParams,
-        seq: String(chunk.seq),
-        total: String(chunk.total),
-      }
-      if (compressed) {
-        params.c = '1'
-      }
-      this.#protocol.post(this.#channelUrl(channel, params), chunk.data)
+    for (const chunk of this.#chunker.split(value)) {
+      this.#protocol.post(
+        this.#channelUrl(channel, { ...baseParams, seq: String(chunk.seq), total: String(chunk.total) }),
+        chunk.data,
+      )
     }
   }
 
@@ -256,13 +251,12 @@ export class IPC {
 
     const seq = url.searchParams.get('seq')
     const total = url.searchParams.get('total')
+    const compressed = url.searchParams.get('c') !== null
 
     if (seq !== null && total !== null) {
-      const compressed = url.searchParams.get('c') !== null
       this.#handleChunk(id, channel, Number(seq), Number(total), payload, compressed)
     }
     else {
-      const compressed = url.searchParams.get('c') !== null
       const raw = compressed ? this.#compressor.decompress(payload, true) : payload
       this.#deliver(channel, raw)
     }

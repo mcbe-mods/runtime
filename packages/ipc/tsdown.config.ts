@@ -13,8 +13,8 @@ export default defineConfig({
   ],
   deps: {
     alwaysBundle: [
+      'fflate',
       'mini-emit',
-      'lz-string',
     ],
     neverBundle: [
       '@minecraft/server',
