@@ -44,6 +44,8 @@ export declare function getRandomRangeValue(_: number, _: number): number;
 export declare function ms2ticks(_?: number, _?: number, _?: number): number;
 export declare function splitGroups(_: number, _?: number): number[];
 export declare function unique(_?: number): string;
+export declare function utf8Decode(_: Uint8Array): string;
+export declare function utf8Encode(_: string): Uint8Array;
 // #endregion
 
 // #region Variables

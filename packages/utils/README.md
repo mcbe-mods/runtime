@@ -49,6 +49,8 @@ getRadiusRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions
 | `getRadiusRange(location, radius?)` | Get block positions within a radius |
 | `getRandomProbability(probability)` | Random chance with percentage |
 | `getRandomRangeValue(min, max)` | Random integer within a range |
+| `utf8Encode(s)` | Encode string to UTF-8 bytes using `encodeURIComponent` |
+| `utf8Decode(bytes)` | Decode UTF-8 bytes back to string using `decodeURIComponent` |
 
 ## License
 

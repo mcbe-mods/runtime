@@ -38,6 +38,8 @@ export function getRandomRangeValue(_, _) {}
 export function ms2ticks(_, _, _) {}
 export function splitGroups(_, _) {}
 export function unique(_) {}
+export function utf8Decode(_) {}
+export function utf8Encode(_) {}
 // #endregion
 
 // #region Variables
