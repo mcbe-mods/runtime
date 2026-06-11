@@ -1,0 +1,56 @@
+{
+  "name": "@mcbe-mods/compress",
+  "type": "module",
+  "version": "1.0.0-beta.3",
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.1",
+  "description": "Deflate compression for MCBE Script API — fflate-based Compressor with threshold",
+  "author": "Lete114",
+  "license": "MIT",
+  "homepage": "https://github.com/mcbe-mods/runtime#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcbe-mods/runtime.git"
+  },
+  "bugs": "https://github.com/mcbe-mods/runtime/issues",
+  "keywords": [
+    "minecraft",
+    "mcbe",
+    "compress",
+    "deflate",
+    "fflate",
+    "bedrock",
+    "script-api"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "prepublishOnly": "pnpm build",
+    "test": "pnpm run build && vitest"
+  },
+  "dependencies": {
+    "@mcbe-mods/utils": "workspace:^",
+    "fflate": "catalog:deps"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:cli",
+    "tsdown-stale-guard": "catalog:testing",
+    "tsnapi": "catalog:testing",
+    "typescript": "catalog:cli",
+    "vitest": "catalog:testing"
+  },
+  "inlinedDependencies": {
+    "fflate": "0.8.3"
+  }
+}
