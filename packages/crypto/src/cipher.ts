@@ -15,10 +15,11 @@ export class Cipher {
   }
 
   static fromPassword(password: string, salt?: string | Uint8Array): Cipher {
+    const passwordBytes = utf8Encode(password)
     const saltBytes = salt !== undefined
       ? (typeof salt === 'string' ? utf8Encode(salt) : salt)
       : utf8Encode('github.com/mcbe-mods/runtime')
-    const key = pbkdf2(sha256, password, saltBytes, { c: ITERATIONS, dkLen: KEY_LENGTH })
+    const key = pbkdf2(sha256, passwordBytes, saltBytes, { c: ITERATIONS, dkLen: KEY_LENGTH })
     return new Cipher(key)
   }
 
