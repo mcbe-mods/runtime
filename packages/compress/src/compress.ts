@@ -1,5 +1,5 @@
 import { Base64, utf8Decode, utf8Encode } from '@mcbe-mods/utils'
-import { deflateSync, inflateSync } from 'fflate'
+import { deflateSync, inflateSync } from 'fflate/browser'
 
 export class Compressor {
   compress(data: string): string {

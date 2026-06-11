@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [StaleGuardRecorder()],
   deps: {
     alwaysBundle: [
-      'fflate',
+      'fflate/**',
     ],
     neverBundle: [
       '@mcbe-mods/utils',
