@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@mcbe-mods/bedrock-url": "workspace:^",
+    "@mcbe-mods/compress": "workspace:^",
     "@mcbe-mods/crypto": "workspace:^",
     "@mcbe-mods/discover": "workspace:^",
     "@mcbe-mods/ipc": "workspace:^",

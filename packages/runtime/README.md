@@ -17,9 +17,10 @@ npm install @mcbe-mods/runtime
 | Source Package | Exports |
 |---------------|---------|
 | `@mcbe-mods/bedrock-url` | `BedrockURL`, `URLSearchParams` |
+| `@mcbe-mods/compress` | `Compressor` |
 | `@mcbe-mods/crypto` | `Cipher` |
 | `@mcbe-mods/discover` | `Discover` |
-| `@mcbe-mods/ipc` | `Chunker`, `Compressor`, `EVENTS`, `IPC`, `PROTOCOL_VERSION` |
+| `@mcbe-mods/ipc` | `Chunker`, `EVENTS`, `IPC`, `PROTOCOL_VERSION` |
 | `@mcbe-mods/log` | `Log` |
 | `@mcbe-mods/protocol` | `Protocol` |
 | `@mcbe-mods/rpc` | `RPC` |

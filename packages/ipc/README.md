@@ -7,7 +7,7 @@
 
 Inter-Pack Communication for Minecraft Bedrock Edition Script API.
 
-Fire-and-forget messaging with automatic chunking and deflate compression via fflate.
+Fire-and-forget messaging with automatic chunking and optional pluggable compression.
 
 ## Install
 
@@ -59,11 +59,36 @@ ipc.dispose()
 interface IPCOptions {
   namespace?: string // default: 'global'
   chunkSize?: number // default: 1800 (max safe bytes per scriptEvent)
-  compressThreshold?: number // default: 800 (compress payloads above this)
+  compressThreshold?: number // default: 800 (only compress when payload exceeds this)
+  compress?: DataCompressor // pluggable compression (e.g. @mcbe-mods/compress)
   maxPacketSize?: number // default: 1_000_000
   chunkTimeout?: number // default: 30_000 (ms)
   cipher?: ProtocolCipher // transport-layer encryption
 }
+```
+
+### Compression
+
+Compression is **optional** and **pluggable** via the `compress` option.
+IPC compares the compressed result length against the original — if shorter, the
+compressed version is sent with a `c` flag; the receiver decompresses automatically.
+
+Use the standalone [`@mcbe-mods/compress`](../compress) package:
+
+```ts
+import { Compressor } from '@mcbe-mods/compress'
+const ipc = new IPC({ compress: new Compressor(), compressThreshold: 500 })
+```
+
+Or provide any custom implementation matching `DataCompressor`:
+
+```ts
+const ipc = new IPC({
+  compress: {
+    compress: (s) => myPack(s),
+    decompress: (s) => myUnpack(s),
+  },
+})
 ```
 
 ## License

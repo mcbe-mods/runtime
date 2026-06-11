@@ -6,6 +6,7 @@
     "moduleResolution": "Bundler",
     "paths": {
       "@mcbe-mods/bedrock-url": ["./packages/bedrock-url/src/index.ts"],
+      "@mcbe-mods/compress": ["./packages/compress/src/index.ts"],
       "@mcbe-mods/crypto": ["./packages/crypto/src/index.ts"],
       "@mcbe-mods/ipc": ["./packages/ipc/src/index.ts"],
       "@mcbe-mods/log": ["./packages/log/src/index.ts"],
@@ -25,6 +26,7 @@
   },
   "include": [
     "packages/bedrock-url/src",
+    "packages/compress/src",
     "packages/crypto/src",
     "packages/ipc/src",
     "packages/log/src",
