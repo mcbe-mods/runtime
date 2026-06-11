@@ -77,6 +77,7 @@ Use the standalone [`@mcbe-mods/compress`](../compress) package:
 
 ```ts
 import { Compressor } from '@mcbe-mods/compress'
+
 const ipc = new IPC({ compress: new Compressor(), compressThreshold: 500 })
 ```
 
@@ -85,8 +86,8 @@ Or provide any custom implementation matching `DataCompressor`:
 ```ts
 const ipc = new IPC({
   compress: {
-    compress: (s) => myPack(s),
-    decompress: (s) => myUnpack(s),
+    compress: s => myPack(s),
+    decompress: s => myUnpack(s),
   },
 })
 ```
