@@ -1,5 +1,6 @@
 import type { IPCEvents } from './events'
 import type {
+  DataCompressor,
   IPCOptions,
   OnOptions,
   SendOptions,
@@ -11,11 +12,10 @@ import { Protocol } from '@mcbe-mods/protocol'
 import { unique } from '@mcbe-mods/utils'
 import { EventEmitter } from 'mini-emit'
 import { Chunker } from './chunk'
-import { Compressor } from './compress'
 import { PROTOCOL_VERSION } from './constants'
 import { EVENTS } from './events'
 
-type DefaultedIPCOptions = Required<Omit<IPCOptions, 'cipher'>> & Pick<IPCOptions, 'cipher'>
+type DefaultedIPCOptions = Required<Omit<IPCOptions, 'cipher' | 'compress'>> & Pick<IPCOptions, 'cipher' | 'compress'>
 
 const DEFAULT_OPTIONS: DefaultedIPCOptions = {
   namespace: 'global',
@@ -33,7 +33,7 @@ const IPC_HOST_SUFFIX = '.ipc'
  * Built on top of bedrock:// protocol, supports:
  * - Fire-and-forget messaging (`send` / `on`)
  * - Automatic chunking of large payloads
- * - Optional compression via fflate
+ * - Optional pluggable compression via {@link DataCompressor}
  * - Optional encryption via ProtocolCipher
  *
  * @example
@@ -47,7 +47,7 @@ export class IPC {
   readonly #options: DefaultedIPCOptions
   readonly #protocol: Protocol
   readonly #log: Log
-  readonly #compressor: Compressor
+  readonly #compressor?: DataCompressor
   readonly #chunker: Chunker
   readonly #onHandlers = new Map<string, Set<(data: string) => void>>()
   readonly #sentIds = new Set<string>()
@@ -68,7 +68,7 @@ export class IPC {
     this.#options = { ...DEFAULT_OPTIONS, ...options }
     this.#protocol = new Protocol({ cipher: options.cipher })
     this.#log = new Log(`IPC:${this.#options.namespace}`)
-    this.#compressor = new Compressor(this.#options.compressThreshold)
+    this.#compressor = options.compress
     this.#chunker = new Chunker(this.#options.chunkSize)
 
     this.#protocolUnsubscribe = this.#protocol.onReceive((event) => {
@@ -208,7 +208,15 @@ export class IPC {
       )
     }
 
-    const { value, compressed } = this.#compressor.compress(body)
+    let value = body
+    let compressed = false
+    if (body.length > this.#options.compressThreshold && this.#compressor) {
+      const out = this.#compressor.compress(body)
+      if (out.length < body.length) {
+        value = out
+        compressed = true
+      }
+    }
     const baseParams: Record<string, string> = { v: PROTOCOL_VERSION, id }
     if (compressed) {
       baseParams.c = '1'
@@ -257,7 +265,7 @@ export class IPC {
       this.#handleChunk(id, channel, Number(seq), Number(total), payload, compressed)
     }
     else {
-      const raw = compressed ? this.#compressor.decompress(payload, true) : payload
+      const raw = compressed && this.#compressor ? this.#compressor.decompress(payload) : payload
       this.#deliver(channel, raw)
     }
   }
@@ -266,8 +274,8 @@ export class IPC {
     const result = this.#chunker.assemble(id, seq, total, payload, compressed, this.#options.chunkTimeout)
 
     if (result.done) {
-      const raw = result.compressed
-        ? this.#compressor.decompress(result.data, true)
+      const raw = result.compressed && this.#compressor
+        ? this.#compressor.decompress(result.data)
         : result.data
       this.#deliver(channel, raw)
     }

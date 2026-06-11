@@ -10,12 +10,6 @@ export class Chunker {
   assemble(_, _, _, _, _, _) {}
   get pendingCount() {}
 }
-export class Compressor {
-  threshold
-  constructor(_) {}
-  compress(_) {}
-  decompress(_, _) {}
-}
 export class IPC {
   options
   protocol
