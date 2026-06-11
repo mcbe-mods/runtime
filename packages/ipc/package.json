@@ -46,7 +46,6 @@
     "@mcbe-mods/log": "workspace:^",
     "@mcbe-mods/protocol": "workspace:^",
     "@mcbe-mods/utils": "workspace:^",
-    "fflate": "catalog:deps",
     "mini-emit": "catalog:deps"
   },
   "devDependencies": {
@@ -59,7 +58,6 @@
     "vitest": "catalog:testing"
   },
   "inlinedDependencies": {
-    "fflate": "0.8.3",
     "mini-emit": "1.0.0-beta.0"
   }
 }

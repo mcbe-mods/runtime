@@ -1,7 +1,6 @@
 export { Chunker } from './chunk'
-export { Compressor } from './compress'
 export { PROTOCOL_VERSION } from './constants'
 export { EVENTS } from './events'
 export type { IPCEvents } from './events'
 export { IPC } from './ipc'
-export type { Deserializer, IPCOptions, OnOptions, SendOptions, Serializer } from './types'
+export type { DataCompressor, Deserializer, IPCOptions, OnOptions, SendOptions, Serializer } from './types'

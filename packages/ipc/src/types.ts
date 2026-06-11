@@ -1,5 +1,13 @@
 import type { ProtocolCipher } from '@mcbe-mods/protocol'
 
+/** Custom compression — transforms a string into a smaller string representation */
+export interface DataCompressor {
+  /** @returns The compressed representation of `data` */
+  compress: (data: string) => string
+  /** @returns The original data restored from compressed form */
+  decompress: (data: string) => string
+}
+
 /** Custom serialization — transforms complex data into a string for transport */
 export interface Serializer<T> {
   /** @returns The string representation of `value` */
@@ -40,8 +48,26 @@ export interface IPCOptions {
    * @default 1800
    */
   chunkSize?: number
-  /** Raw JSON payloads larger than this will be compressed with deflate before sending. @default 800 */
+  /**
+   * Raw payloads larger than this (characters) will be compressed when `compress` is set.
+   * IPC compares the compressed result length against the original — if shorter, the
+   * compressed version is sent with a `c` flag for the receiver to decompress.
+   * @default 800
+   */
   compressThreshold?: number
+  /**
+   * Optional compressor for payload compression.
+   * When set, payloads exceeding `compressThreshold` are passed through `compress()`.
+   * If the result is shorter than the original, it's sent with a `c` flag.
+   * On receive, the `decompress()` function is called to restore the original data.
+   *
+   * @example
+   * ```ts
+   * import { Compressor } from '@mcbe-mods/compress'
+   * const ipc = new IPC({ compress: new Compressor() })
+   * ```
+   */
+  compress?: DataCompressor
   /** Maximum allowed serialized packet body size in characters. Throws if exceeded. @default 1_000_000 */
   maxPacketSize?: number
   /**

@@ -13,7 +13,6 @@ export default defineConfig({
   ],
   deps: {
     alwaysBundle: [
-      'fflate',
       'mini-emit',
     ],
     neverBundle: [
