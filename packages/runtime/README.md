@@ -14,17 +14,17 @@ npm install @mcbe-mods/runtime
 
 ## Re-exports
 
-| Source Package | Exports |
-|---------------|---------|
-| `@mcbe-mods/bedrock-url` | `BedrockURL`, `URLSearchParams` |
-| `@mcbe-mods/compress` | `Compressor` |
-| `@mcbe-mods/crypto` | `Cipher` |
-| `@mcbe-mods/discover` | `Discover` |
-| `@mcbe-mods/ipc` | `Chunker`, `EVENTS`, `IPC`, `PROTOCOL_VERSION` |
-| `@mcbe-mods/log` | `Log` |
-| `@mcbe-mods/protocol` | `Protocol` |
-| `@mcbe-mods/rpc` | `RPC` |
-| `@mcbe-mods/utils` | `Base64`, `color`, `unique`, `ms2ticks`, … |
+| Source Package | Value Exports | Type Exports |
+|---------------|---------------|--------------|
+| `@mcbe-mods/bedrock-url` | `BedrockURL`, `URLSearchParams` | |
+| `@mcbe-mods/compress` | `Compressor` | |
+| `@mcbe-mods/crypto` | `Cipher` | |
+| `@mcbe-mods/discover` | `Discover` | `DiscoverOptions`, `ResolvedService`, `ServiceEvent` |
+| `@mcbe-mods/ipc` | `Chunker`, `EVENTS`, `IPC`, `PROTOCOL_VERSION` | `DataCompressor`, `Deserializer`, `IPCEvents`, `IPCOptions`, `OnOptions`, `SendOptions`, `Serializer` |
+| `@mcbe-mods/log` | `Log` | `LogLevel`, `LogOptions` |
+| `@mcbe-mods/protocol` | `Protocol` | `BedrockReceiveEvent`, `ProtocolCipher`, `ProtocolOptions` |
+| `@mcbe-mods/rpc` | `RPC` | `RPCOptions` |
+| `@mcbe-mods/utils` | `Base64`, `color`, `unique`, `ms2ticks`, … | (all types included) |
 
 ```ts
 import { Base64, Cipher, Discover, IPC, Log, Protocol, RPC } from '@mcbe-mods/runtime'
