@@ -13,7 +13,6 @@ export class Chunker {
 export class IPC {
   options
   protocol
-  log
   compressor
   chunker
   onHandlers

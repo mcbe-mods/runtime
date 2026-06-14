@@ -7,7 +7,7 @@ import type {
 } from './types'
 
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
-import { Log } from '@mcbe-mods/log'
+
 import { Protocol } from '@mcbe-mods/protocol'
 import { unique } from '@mcbe-mods/utils'
 import { EventEmitter } from 'mini-emit'
@@ -46,7 +46,6 @@ const IPC_HOST_SUFFIX = '.ipc'
 export class IPC {
   readonly #options: DefaultedIPCOptions
   readonly #protocol: Protocol
-  readonly #log: Log
   readonly #compressor?: DataCompressor
   readonly #chunker: Chunker
   readonly #onHandlers = new Map<string, Set<(data: string) => void>>()
@@ -67,7 +66,6 @@ export class IPC {
   constructor(options: IPCOptions = {}) {
     this.#options = { ...DEFAULT_OPTIONS, ...options }
     this.#protocol = new Protocol({ cipher: options.cipher })
-    this.#log = new Log(`IPC:${this.#options.namespace}`)
     this.#compressor = options.compress
     this.#chunker = new Chunker(this.#options.chunkSize)
 

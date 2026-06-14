@@ -1,5 +1,6 @@
 import type { DiscoverOptions, LocalRegistration, QueryEntry, RemoteEntry, ServiceEvent } from './types'
 
+import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
 import { unique } from '@mcbe-mods/utils'
@@ -93,7 +94,9 @@ export class Discover {
     const post = (): void => {
       const nonce = unique()
       this.#sentIds.add(nonce)
-      const url = `bedrock://${hostname}/?v=${DISCOVER_VERSION}&i=${nonce}`
+      const url = new BedrockURL(`bedrock://${hostname}/`)
+      url.searchParams.set('v', DISCOVER_VERSION)
+      url.searchParams.set('i', nonce)
       this.#protocol.post(url, body)
     }
 
