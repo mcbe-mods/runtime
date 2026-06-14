@@ -92,6 +92,38 @@ const ipc = new IPC({
 })
 ```
 
+### Encryption
+
+Transport-layer encryption is **optional** via the `cipher` option.
+All IPC payloads are encrypted before sending and decrypted on receipt.
+
+Use the standalone [`@mcbe-mods/crypto`](../crypto) package:
+
+```ts
+import { Cipher } from '@mcbe-mods/crypto'
+import { IPC } from '@mcbe-mods/ipc'
+
+const cipher = Cipher.fromPassword('my-shared-secret')
+const ipc = new IPC({ cipher })
+
+// All messages are automatically encrypted/decrypted
+ipc.send('secret-channel', { key: 'value' })
+ipc.on('secret-channel', (data) => { /* decrypted */ })
+```
+
+Or provide any `ProtocolCipher` implementation:
+
+```ts
+const ipc = new IPC({
+  cipher: {
+    encrypt(s: string) { return myEncrypt(s) },
+    decrypt(s: string) { return myDecrypt(s) },
+  },
+})
+```
+
+Messages that fail decryption are silently dropped (handled by the underlying `Protocol` layer).
+
 ## License
 
 [MIT](../../LICENSE)
