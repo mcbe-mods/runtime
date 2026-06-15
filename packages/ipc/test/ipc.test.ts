@@ -148,7 +148,7 @@ describe('IPC', () => {
     ipc.send('ping', { msg: 'hello' })
 
     const sentUrl = (system.sendScriptEvent as any).mock.calls[0][0]
-    const match = sentUrl.match(/id=(0-9a-z+)/)
+    const match = sentUrl.match(/id=([0-9a-z]+)/)
     const sentId = match ? match[1] : ''
 
     simulateReceive(`bedrock://test.ipc/ping?v=1&id=${sentId}`, JSON.stringify({ msg: 'hello' }))

@@ -48,7 +48,6 @@
   "devDependencies": {
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
-    "tsnapi": "catalog:testing",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
   },

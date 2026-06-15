@@ -15,12 +15,5 @@ export default defineConfig({
     alwaysBundle: [
       'mini-emit',
     ],
-    neverBundle: [
-      '@minecraft/server',
-      '@mcbe-mods/protocol',
-
-      '@mcbe-mods/bedrock-url',
-      '@mcbe-mods/utils',
-    ],
   },
 })

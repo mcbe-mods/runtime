@@ -7,15 +7,5 @@ export default defineConfig({
   dts: true,
   exports: true,
   publint: true,
-  deps: {
-    neverBundle: [
-      '@mcbe-mods/bedrock-url',
-      '@mcbe-mods/discover',
-      '@mcbe-mods/ipc',
-      '@mcbe-mods/log',
-      '@mcbe-mods/protocol',
-      '@mcbe-mods/rpc',
-      '@minecraft/server',
-    ],
-  },
+
 })

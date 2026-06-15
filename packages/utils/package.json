@@ -2,13 +2,13 @@
   "name": "@mcbe-mods/utils",
   "type": "module",
   "version": "1.0.0-beta.3",
+  "publishConfig": {
+    "access": "public"
+  },
   "packageManager": "pnpm@10.33.1",
   "description": "Utility functions for Minecraft Bedrock Edition mod development",
   "author": "Lete114",
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "homepage": "https://github.com/mcbe-mods/runtime#readme",
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
     "test": "pnpm run build && vitest"
   },
   "devDependencies": {
-    "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",

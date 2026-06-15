@@ -11,8 +11,6 @@ export default defineConfig({
     alwaysBundle: [
       'fflate/**',
     ],
-    neverBundle: [
-      '@mcbe-mods/utils',
-    ],
+
   },
 })
