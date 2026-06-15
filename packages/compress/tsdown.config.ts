@@ -11,6 +11,5 @@ export default defineConfig({
     alwaysBundle: [
       'fflate/**',
     ],
-
   },
 })

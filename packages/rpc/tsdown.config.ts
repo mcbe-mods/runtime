@@ -7,5 +7,4 @@ export default defineConfig({
   dts: true,
   exports: true,
   publint: true,
-
 })
