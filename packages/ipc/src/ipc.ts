@@ -51,6 +51,7 @@ export class IPC {
   readonly #onHandlers = new Map<string, Set<(data: string) => void>>()
   readonly #sentIds = new Set<string>()
   #protocolUnsubscribe: () => void
+  #disposed = false
 
   /**
    * System-level event emitter for internal IPC events.
@@ -95,6 +96,10 @@ export class IPC {
    * After calling this, the instance will no longer receive or process any messages.
    */
   dispose(): void {
+    if (this.#disposed) {
+      return
+    }
+    this.#disposed = true
     this.#protocolUnsubscribe()
     this.#onHandlers.clear()
     this.#sentIds.clear()

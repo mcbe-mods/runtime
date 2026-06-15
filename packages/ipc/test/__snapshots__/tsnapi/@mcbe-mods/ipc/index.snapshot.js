@@ -18,6 +18,7 @@ export class IPC {
   onHandlers
   sentIds
   protocolUnsubscribe
+  disposed
   constructor(_) {}
   dispose() {}
   send(_, _, _) {}
