@@ -3,27 +3,34 @@ import tinydateformat from 'tinydateformat2'
 import { LEVELS } from './levels'
 
 export interface LogOptions {
+  level?: LogLevel
   timestamp?: boolean
   dateFormat?: string
 }
 
 export class Log {
-  static level: LogLevel = 'info'
-  static timestamp = false
-  static dateFormat = 'HH:mm:ss'
+  static defaultLevel: LogLevel = 'info'
+  static defaultTimestamp = false
+  static defaultDateFormat = 'HH:mm:ss'
 
   readonly #name: string
-  readonly #timestamp: boolean
-  readonly #dateFormat: string
+  readonly #level?: LogLevel
+  readonly #timestamp?: boolean
+  readonly #dateFormat?: string
 
   constructor(name: string, options?: LogOptions) {
     this.#name = name
-    this.#timestamp = options?.timestamp ?? Log.timestamp
-    this.#dateFormat = options?.dateFormat ?? Log.dateFormat
+    this.#level = options?.level
+    this.#timestamp = options?.timestamp
+    this.#dateFormat = options?.dateFormat
+  }
+
+  get level(): LogLevel {
+    return this.#level ?? Log.defaultLevel
   }
 
   debug(fn: () => unknown): void {
-    if (LEVELS[Log.level] > LEVELS.debug) {
+    if (LEVELS[this.level] > LEVELS.debug) {
       return
     }
     const val = fn()
@@ -36,28 +43,28 @@ export class Log {
   }
 
   info(...args: unknown[]): void {
-    if (LEVELS[Log.level] > LEVELS.info) {
+    if (LEVELS[this.level] > LEVELS.info) {
       return
     }
     console.info(this.#format(), ...args)
   }
 
   warn(...args: unknown[]): void {
-    if (LEVELS[Log.level] > LEVELS.warn) {
+    if (LEVELS[this.level] > LEVELS.warn) {
       return
     }
     console.warn(this.#format(), ...args)
   }
 
   error(...args: unknown[]): void {
-    if (LEVELS[Log.level] > LEVELS.error) {
+    if (LEVELS[this.level] > LEVELS.error) {
       return
     }
     console.error(this.#format(), ...args)
   }
 
   fatal(...args: unknown[]): void {
-    if (LEVELS[Log.level] > LEVELS.fatal) {
+    if (LEVELS[this.level] > LEVELS.fatal) {
       return
     }
     console.error(this.#format(), ...args)
@@ -66,6 +73,7 @@ export class Log {
   child(name: string, options?: LogOptions): Log {
     const childName = this.#name ? `${this.#name}:${name}` : name
     return new Log(childName, {
+      level: options?.level ?? this.#level,
       timestamp: options?.timestamp ?? this.#timestamp,
       dateFormat: options?.dateFormat ?? this.#dateFormat,
     })
@@ -73,8 +81,10 @@ export class Log {
 
   #format(): string {
     let prefix = ''
-    if (this.#timestamp || Log.timestamp) {
-      prefix += `[${tinydateformat(this.#dateFormat)}] `
+    const showTimestamp = this.#timestamp ?? Log.defaultTimestamp
+    if (showTimestamp) {
+      const fmt = this.#dateFormat ?? Log.defaultDateFormat
+      prefix += `[${tinydateformat(fmt)}] `
     }
     prefix += `[${this.#name}]`
     return prefix
