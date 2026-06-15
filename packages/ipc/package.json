@@ -49,7 +49,6 @@
   },
   "devDependencies": {
     "@minecraft/server": "catalog:deps",
-    "publint": "catalog:cli",
     "tsdown": "catalog:cli",
     "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",

@@ -7,13 +7,4 @@ export default defineConfig({
   dts: true,
   exports: true,
   publint: true,
-  deps: {
-    neverBundle: [
-      '@minecraft/server',
-      '@mcbe-mods/protocol',
-      '@mcbe-mods/log',
-      '@mcbe-mods/bedrock-url',
-      '@mcbe-mods/utils',
-    ],
-  },
 })

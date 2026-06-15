@@ -1,5 +1,5 @@
 {
-  "name": "@mcbe-mods/runtime",
+  "name": "@mcbe-mods/runtime-monorepo",
   "type": "module",
   "version": "1.0.0-beta.3",
   "private": true,
@@ -32,7 +32,7 @@
     "vitest": "catalog:testing"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && pnpm -r build && npx lint-staged"
+    "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && npx lint-staged"
   },
   "lint-staged": {
     "*": "eslint --fix"
