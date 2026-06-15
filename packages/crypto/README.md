@@ -54,6 +54,25 @@ const cipher = Cipher.fromKey(key)
 
 Both sides must use the same password or key for communication to work.
 
+### Custom random source
+
+By default, nonces are generated using `Math.random()`, which is safe for XChaCha20-Poly1305's 192-bit nonce space but not cryptographically secure. You can inject any random bytes function via `CipherOptions`:
+
+```ts
+const cipher = Cipher.fromPassword('secret', undefined, {
+  randomBytes(size) {
+    // Use any available random source
+    const buf = new Uint8Array(size)
+    for (let i = 0; i < size; i++) buf[i] = (Math.random() * 256) | 0
+    return buf
+  },
+})
+```
+
+This works with both `fromPassword` and `fromKey`.
+
+**Note:** `@minecraft/server` does not provide a secure random API. If your runtime has access to one (e.g. Web `crypto.getRandomValues`), you can pass it here.
+
 ## License
 
 [MIT](../../LICENSE)

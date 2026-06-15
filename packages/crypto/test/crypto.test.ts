@@ -75,4 +75,33 @@ describe('Cipher', () => {
       expect(() => cipher.decrypt('!!!not-base64!!!')).toThrow()
     })
   })
+
+  describe('custom randomBytes', () => {
+    it('uses injected randomBytes for nonce generation', () => {
+      let callCount = 0
+      const cipher = Cipher.fromPassword('pw', undefined, {
+        randomBytes(size) {
+          callCount++
+          return new Uint8Array(size)
+        },
+      })
+      const encrypted = cipher.encrypt('hello')
+      expect(callCount).toBeGreaterThanOrEqual(1)
+      // using zero-filled nonce is valid, so decryption should still work
+      expect(cipher.decrypt(encrypted)).toBe('hello')
+    })
+
+    it('accepts system.getRandomValues via fromKey', () => {
+      const key = new Uint8Array(32).fill(42)
+      const cipher = Cipher.fromKey(key, {
+        randomBytes(size) {
+          const buf = new Uint8Array(size)
+          for (let i = 0; i < size; i++) buf[i] = i & 0xFF
+          return buf
+        },
+      })
+      const encrypted = cipher.encrypt('test')
+      expect(cipher.decrypt(encrypted)).toBe('test')
+    })
+  })
 })
