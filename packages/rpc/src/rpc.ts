@@ -48,6 +48,7 @@ export class RPC {
   readonly #handlers = new Map<string, (data: unknown) => unknown | Promise<unknown>>()
   readonly #sentIds = new Set<string>()
   #unsubscribe: () => void
+  #disposed = false
 
   /**
    * Creates an RPC instance bound to the given namespace.
@@ -170,6 +171,9 @@ export class RPC {
    * @param timeout - Optional timeout in ms (overrides the instance default)
    */
   invoke<T>(method: string, data?: unknown, timeout?: number): Promise<T> {
+    if (this.#disposed) {
+      throw new Error('RPC already disposed')
+    }
     const id = unique()
     this.#sentIds.add(id)
 
@@ -207,6 +211,9 @@ export class RPC {
    * @returns A function that unsubscribes this handler
    */
   handle<T>(method: string, handler: (data: T) => unknown | Promise<unknown>): () => void {
+    if (this.#disposed) {
+      throw new Error('RPC already disposed')
+    }
     if (this.#handlers.has(method)) {
       throw new Error(`RPC handler already registered for method: ${method}`)
     }
@@ -221,6 +228,10 @@ export class RPC {
    * Unsubscribes from the protocol, clears all handlers, and rejects all pending invokes.
    */
   dispose(): void {
+    if (this.#disposed) {
+      return
+    }
+    this.#disposed = true
     this.#unsubscribe()
     this.#handlers.clear()
     for (const [id, pending] of this.#pending) {
