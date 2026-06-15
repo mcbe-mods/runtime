@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@mcbe-mods/bedrock-url": "workspace:^",
-
     "@mcbe-mods/protocol": "workspace:^",
     "@mcbe-mods/utils": "workspace:^",
     "mini-emit": "catalog:deps"

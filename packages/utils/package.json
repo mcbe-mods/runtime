@@ -35,9 +35,6 @@
     "prepublishOnly": "pnpm build",
     "test": "pnpm run build && vitest"
   },
-  "peerDependencies": {
-    "@minecraft/server": ">=1.18.0"
-  },
   "devDependencies": {
     "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
