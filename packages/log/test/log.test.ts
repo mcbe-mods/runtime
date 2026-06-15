@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Log } from '../src/log'
 
 describe('Log', () => {
-  const originalLevel = Log.level
-  const originalTimestamp = Log.timestamp
+  const originalLevel = Log.defaultLevel
+  const originalTimestamp = Log.defaultTimestamp
 
   beforeEach(() => {
-    Log.level = 'info'
-    Log.timestamp = false
+    Log.defaultLevel = 'info'
+    Log.defaultTimestamp = false
   })
 
   afterEach(() => {
-    Log.level = originalLevel
-    Log.timestamp = originalTimestamp
+    Log.defaultLevel = originalLevel
+    Log.defaultTimestamp = originalTimestamp
   })
 
   describe('level filtering', () => {
@@ -25,7 +25,7 @@ describe('Log', () => {
     })
 
     it('suppresses when level is below threshold', () => {
-      Log.level = 'warn'
+      Log.defaultLevel = 'warn'
       const spy = vi.spyOn(console, 'info' as any).mockImplementation(() => {})
       const log = new Log('Test')
       log.info('silent')
@@ -34,7 +34,7 @@ describe('Log', () => {
     })
 
     it('outputs error when level is error', () => {
-      Log.level = 'error'
+      Log.defaultLevel = 'error'
       const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const log = new Log('Test')
       log.warn('should not show')
@@ -58,11 +58,33 @@ describe('Log', () => {
       expect(spy).toHaveBeenCalledWith('[MyLogger]', 'hello')
       spy.mockRestore()
     })
+
+    it('isolates level between instances', () => {
+      const spyInfo = vi.spyOn(console, 'info').mockImplementation(() => {})
+      const spyWarn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      Log.defaultLevel = 'error'
+      const debugLogger = new Log('Debug', { level: 'debug' })
+      const errorLogger = new Log('Error', { level: 'error' })
+
+      debugLogger.warn('A')
+      errorLogger.warn('B')
+      expect(spyWarn).toHaveBeenCalledOnce()
+      expect(spyWarn).toHaveBeenCalledWith('[Debug]', 'A')
+
+      debugLogger.info('C')
+      errorLogger.info('D')
+      expect(spyInfo).toHaveBeenCalledOnce()
+      expect(spyInfo).toHaveBeenCalledWith('[Debug]', 'C')
+
+      spyInfo.mockRestore()
+      spyWarn.mockRestore()
+    })
   })
 
   describe('debug lazy evaluation', () => {
     it('calls function when debug level is active', () => {
-      Log.level = 'debug'
+      Log.defaultLevel = 'debug'
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
       const fn = vi.fn(() => 'result')
       const log = new Log('Test')
@@ -73,7 +95,7 @@ describe('Log', () => {
     })
 
     it('does not call function when debug level is inactive', () => {
-      Log.level = 'info'
+      Log.defaultLevel = 'info'
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
       const fn = vi.fn(() => 'result')
       const log = new Log('Test')
@@ -117,7 +139,7 @@ describe('Log', () => {
 
   describe('timestamp', () => {
     it('includes timestamp in output when enabled', () => {
-      Log.timestamp = true
+      Log.defaultTimestamp = true
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('Test')
       log.warn('msg')
@@ -129,7 +151,7 @@ describe('Log', () => {
     })
 
     it('does not include timestamp when disabled', () => {
-      Log.timestamp = false
+      Log.defaultTimestamp = false
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('Test')
       log.warn('msg')
@@ -138,7 +160,7 @@ describe('Log', () => {
     })
 
     it('per-logger timestamp overrides global', () => {
-      Log.timestamp = false
+      Log.defaultTimestamp = false
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('Test', { timestamp: true })
       log.warn('msg')
@@ -148,8 +170,8 @@ describe('Log', () => {
     })
 
     it('uses custom dateFormat', () => {
-      Log.timestamp = true
-      Log.dateFormat = 'YYYY'
+      Log.defaultTimestamp = true
+      Log.defaultDateFormat = 'YYYY'
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('Test')
       log.warn('year')

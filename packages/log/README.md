@@ -17,10 +17,11 @@ npm install @mcbe-mods/log
 ```ts
 import { Log } from '@mcbe-mods/log'
 
-// Global level filter
-Log.level = 'debug'
+// Default level (fallback when not set per-instance)
+Log.defaultLevel = 'debug'
 
-const log = new Log('MyAddon')
+// Or set per-instance
+const log = new Log('MyAddon', { level: 'debug' })
 
 log.info('Hello')
 log.warn('Something suspicious', detail)
@@ -35,7 +36,7 @@ const child = new Log('MyAddon:Sub')
 child.info('scoped message')
 
 // Timestamps
-Log.timestamp = true
+Log.defaultTimestamp = true
 // or per-instance
 const log2 = new Log('MyAddon', { timestamp: true, dateFormat: 'HH:mm:ss' })
 ```
@@ -44,8 +45,9 @@ const log2 = new Log('MyAddon', { timestamp: true, dateFormat: 'HH:mm:ss' })
 
 ```ts
 interface LogOptions {
-  timestamp?: boolean // default: false
-  dateFormat?: string // default: 'HH:mm:ss'
+  level?: LogLevel // default: Log.defaultLevel
+  timestamp?: boolean // default: Log.defaultTimestamp
+  dateFormat?: string // default: Log.defaultDateFormat
 }
 ```
 
