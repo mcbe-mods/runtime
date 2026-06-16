@@ -27,6 +27,10 @@ export class Discover {
   #sentIds = new Set<string>()
   #ttlTimer: number | undefined
 
+  /**
+   * Create a Discover instance for service discovery over Minecraft's script events.
+   * @param options - Configuration for heartbeat interval and TTL
+   */
   constructor(options: DiscoverOptions = {}) {
     this.#options = {
       heartbeatInterval: options.heartbeatInterval ?? DEFAULT_HEARTBEAT_INTERVAL,
@@ -75,6 +79,12 @@ export class Discover {
     this.#startTtlTimer()
   }
 
+  /**
+   * Register a local service. Sends heartbeats on an interval to announce availability.
+   * @param type - Service type identifier (appended with `.discover` for the hostname)
+   * @param meta - Optional metadata advertised to remote queriers
+   * @returns An unsubscribe function to deregister the service
+   */
   register<M = Record<string, any>>(type: string, meta?: M): () => void {
     const _meta = meta ?? {}
 
@@ -109,6 +119,13 @@ export class Discover {
     }
   }
 
+  /**
+   * Subscribe to service discovery events for a given service type.
+   * Already-resolved services are immediately delivered to the callback.
+   * @param type - Service type to watch (suffix-matched against discovered hostnames)
+   * @param callback - Called with `'service-resolved'` or `'service-removed'` events
+   * @returns An unsubscribe function to stop listening
+   */
   query<M = Record<string, any>>(type: string, callback: (event: ServiceEvent<M>) => void): () => void {
     const id = ++this.#queryIdCounter
     this.#queries.set(id, { type, callback })

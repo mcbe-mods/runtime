@@ -35,18 +35,38 @@ export class Base64 {
     return new Uint8Array(bytes)
   }
 
+  /**
+   * Encode a UTF-8 string to base64.
+   * @param input - UTF-8 plaintext
+   * @returns Base64-encoded string
+   */
   static encode(input: string): string {
     return Base64.#toBase64(utf8Encode(input))
   }
 
+  /**
+   * Decode a base64 string back to UTF-8.
+   * @param input - Base64-encoded string
+   * @returns UTF-8 plaintext
+   */
   static decode(input: string): string {
     return utf8Decode(Base64.#fromBase64(input))
   }
 
+  /**
+   * Encode a byte array to base64.
+   * @param bytes - Raw bytes
+   * @returns Base64-encoded string
+   */
   static fromBytes(bytes: Uint8Array): string {
     return Base64.#toBase64(bytes)
   }
 
+  /**
+   * Decode a base64 string to raw bytes.
+   * @param input - Base64-encoded string
+   * @returns Decoded bytes
+   */
   static toBytes(input: string): Uint8Array {
     return Base64.#fromBase64(input)
   }
