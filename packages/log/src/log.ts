@@ -29,16 +29,23 @@ export class Log {
     return this.#level ?? Log.defaultLevel
   }
 
-  debug(fn: () => unknown): void {
+  debug(...args: unknown[]): void
+  debug(fn: () => unknown): void
+  debug(fnOrArg: (() => unknown) | unknown, ...rest: unknown[]): void {
     if (LEVELS[this.level] > LEVELS.debug) {
       return
     }
-    const val = fn()
-    if (val !== undefined) {
-      console.log(this.#format(), val)
+    if (typeof fnOrArg === 'function') {
+      const val = (fnOrArg as () => unknown)()
+      if (val !== undefined) {
+        console.log(this.#format(), val)
+      }
+      else {
+        console.log(this.#format())
+      }
     }
     else {
-      console.log(this.#format())
+      console.log(this.#format(), fnOrArg, ...rest)
     }
   }
 

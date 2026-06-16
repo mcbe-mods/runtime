@@ -55,7 +55,7 @@ interface LogOptions {
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `debug` | `(fn: () => unknown): void` | Lazy evaluation — only calls `fn` when level ≤ `debug`. Use for expensive-to-compute values |
+| `debug` | `(...args: unknown[]): void` / `(fn: () => unknown): void` | Overloaded: direct values or lazy thunk (`fn` called only when level ≤ `debug`) |
 | `info` | `(...args: unknown[]): void` | Direct values |
 | `warn` | `(...args: unknown[]): void` | Direct values |
 | `error` | `(...args: unknown[]): void` | Direct values |

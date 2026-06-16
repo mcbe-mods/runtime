@@ -82,8 +82,17 @@ describe('Log', () => {
     })
   })
 
-  describe('debug lazy evaluation', () => {
-    it('calls function when debug level is active', () => {
+  describe('debug', () => {
+    it('accepts direct string arguments', () => {
+      Log.defaultLevel = 'debug'
+      const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      const log = new Log('Test')
+      log.debug('hello', 'world')
+      expect(spy).toHaveBeenCalledWith('[Test]', 'hello', 'world')
+      spy.mockRestore()
+    })
+
+    it('accepts lazy thunk', () => {
       Log.defaultLevel = 'debug'
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
       const fn = vi.fn(() => 'result')
@@ -94,13 +103,22 @@ describe('Log', () => {
       spy.mockRestore()
     })
 
-    it('does not call function when debug level is inactive', () => {
+    it('does not evaluate thunk when debug level is inactive', () => {
       Log.defaultLevel = 'info'
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
       const fn = vi.fn(() => 'result')
       const log = new Log('Test')
       log.debug(fn)
       expect(fn).not.toHaveBeenCalled()
+      expect(spy).not.toHaveBeenCalled()
+      spy.mockRestore()
+    })
+
+    it('does not output direct args when debug level is inactive', () => {
+      Log.defaultLevel = 'info'
+      const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      const log = new Log('Test')
+      log.debug('silent')
       expect(spy).not.toHaveBeenCalled()
       spy.mockRestore()
     })
