@@ -181,6 +181,44 @@ describe('RPC', () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
+  describe('handle duplicate', () => {
+    it('does not throw on duplicate registration', () => {
+      const handler = vi.fn()
+      rpc.handle('test', handler)
+      expect(() => rpc.handle('test', vi.fn())).not.toThrow()
+    })
+
+    it('replaces previous handler on duplicate registration', () => {
+      const first = vi.fn(() => 'first')
+      const second = vi.fn(() => 'second')
+      rpc.handle('test', first)
+      rpc.handle('test', second)
+
+      mockScriptEvent.simulateReceive(reqUrl('test', 'test', 'REQ1'), '')
+
+      expect(first).not.toHaveBeenCalled()
+      expect(second).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('once', () => {
+    it('handler fires once then auto-unsubscribes', () => {
+      const handler = vi.fn()
+      rpc.once('test', handler)
+      mockScriptEvent.simulateReceive(reqUrl('test', 'test', 'REQ1'), '')
+      mockScriptEvent.simulateReceive(reqUrl('test', 'test', 'REQ2'), '')
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('unsubscribe prevents handler from firing', () => {
+      const handler = vi.fn()
+      const off = rpc.once('test', handler)
+      off()
+      mockScriptEvent.simulateReceive(reqUrl('test', 'test', 'REQ1'), '')
+      expect(handler).not.toHaveBeenCalled()
+    })
+  })
+
   describe('cipher', () => {
     const cipher = {
       encrypt: (s: string) => `enc(${s})`,

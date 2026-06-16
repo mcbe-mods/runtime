@@ -59,7 +59,7 @@ export class RPC {
     this.#protocol = new Protocol({ cipher: options.cipher })
     this.#log = new Log(`RPC:${this.#options.namespace}`)
 
-    this.#unsubscribe = this.#protocol.onReceive((event) => {
+    this.#unsubscribe = this.#protocol.on((event) => {
       if (event.sourceType !== 'Server') {
         return
       }
@@ -215,12 +215,22 @@ export class RPC {
       throw new Error('RPC already disposed')
     }
     if (this.#handlers.has(method)) {
-      throw new Error(`RPC handler already registered for method: ${method}`)
+      this.#log.warn(`RPC handler already registered for method: ${method}, replacing`)
     }
     this.#handlers.set(method, handler as (data: unknown) => unknown | Promise<unknown>)
     return () => {
       this.#handlers.delete(method)
     }
+  }
+
+  once<T>(method: string, handler: (data: T) => unknown | Promise<unknown>): () => void {
+    let off: () => void
+    const wrapped = (data: T): unknown | Promise<unknown> => {
+      off()
+      return handler(data)
+    }
+    off = this.handle(method, wrapped)
+    return off
   }
 
   /**

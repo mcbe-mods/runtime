@@ -60,6 +60,7 @@ export declare class IPC {
   send<T>(_: string, _: T, _: SendOptions<T>): void;
   on<T>(_: string, _: (_: T) => void): () => void;
   on<T>(_: string, _: (_: T) => void, _: OnOptions<T>): () => void;
+  once<T>(_: string, _: (_: T) => void): () => void;
 }
 // #endregion
 

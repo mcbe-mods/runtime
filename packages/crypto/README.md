@@ -26,7 +26,7 @@ const cipher = Cipher.fromPassword('my-shared-secret')
 const protocol = new Protocol({ cipher })
 
 protocol.post('bedrock://my-addon/info', 'hello') // automatically encrypted
-protocol.onReceive((event) => {
+protocol.on((event) => {
   event.message // automatically decrypted
 })
 ```

@@ -39,8 +39,17 @@ export class Protocol {
     system.sendScriptEvent(id, this.#cipher ? this.#cipher.encrypt(message) : message)
   }
 
-  onReceive(handler: (event: BedrockReceiveEvent) => void): () => void {
-    this.#subscriptions.add(handler)
+  on(handler: (event: BedrockReceiveEvent) => void): () => void
+  on(handler: (event: BedrockReceiveEvent) => void, options: { sourceType?: ScriptEventSource }): () => void
+  on(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
+    const wrapped = (event: BedrockReceiveEvent): void => {
+      if (options?.sourceType && event.sourceType !== options.sourceType) {
+        return
+      }
+      handler(event)
+    }
+
+    this.#subscriptions.add(wrapped)
 
     if (!this.#listener) {
       this.#listener = (event) => {
@@ -75,12 +84,27 @@ export class Protocol {
     }
 
     return () => {
-      this.#subscriptions.delete(handler)
+      this.#subscriptions.delete(wrapped)
       if (this.#subscriptions.size === 0 && this.#listener) {
         system.afterEvents.scriptEventReceive.unsubscribe(this.#listener!)
         this.#listener = null
       }
     }
+  }
+
+  once(handler: (event: BedrockReceiveEvent) => void): () => void {
+    let off: () => void
+    const wrapped = (event: BedrockReceiveEvent): void => {
+      off()
+      handler(event)
+    }
+    off = this.on(wrapped)
+    return off
+  }
+
+  /** @deprecated Use `on` instead. */
+  onReceive(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
+    return options ? this.on(handler, options) : this.on(handler)
   }
 
   dispose(): void {

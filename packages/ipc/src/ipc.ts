@@ -70,7 +70,7 @@ export class IPC {
     this.#compressor = options.compress
     this.#chunker = new Chunker(this.#options.chunkSize)
 
-    this.#protocolUnsubscribe = this.#protocol.onReceive((event) => {
+    this.#protocolUnsubscribe = this.#protocol.on((event) => {
       if (event.sourceType !== 'Server') {
         return
       }
@@ -194,6 +194,16 @@ export class IPC {
         this.#onHandlers.delete(channel)
       }
     }
+  }
+
+  once<T>(channel: string, handler: (data: T) => void): () => void {
+    let off: () => void
+    const wrapped = (data: T): void => {
+      off()
+      handler(data)
+    }
+    off = this.on(channel, wrapped)
+    return off
   }
 
   #channelUrl(channel: string, params: Record<string, string>): string {

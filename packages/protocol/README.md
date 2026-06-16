@@ -24,7 +24,7 @@ import { Protocol } from '@mcbe-mods/protocol'
 const protocol = new Protocol()
 
 // Subscribe to incoming messages
-const unsubscribe = protocol.onReceive((event) => {
+const unsubscribe = protocol.on((event) => {
   event.url // BedrockURL
   event.message // string payload
   event.sourceType // 'Server' | 'Client' | 'Other'
@@ -57,7 +57,7 @@ const protocol = new Protocol({
 })
 
 protocol.post('bedrock://secret/cmd', 'hello') // automatically encrypted
-protocol.onReceive((event) => {
+protocol.on((event) => {
   event.message // automatically decrypted
 })
 ```

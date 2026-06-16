@@ -23,14 +23,14 @@ describe('Protocol', () => {
       expect(mockScriptEvent.send).toHaveBeenCalledWith('bedrock://host/path', 'enc(hello)')
     })
 
-    it('decrypts incoming messages via onReceive', () => {
+    it('decrypts incoming messages via on', () => {
       const cipher: ProtocolCipher = {
         encrypt: (s: string) => `enc(${s})`,
         decrypt: (s: string) => s.replace(/^enc\(|\)$/g, ''),
       }
       const handler = vi.fn()
       const encrypted = new Protocol({ cipher })
-      encrypted.onReceive(handler)
+      encrypted.on(handler)
       mockScriptEvent.simulateReceive('bedrock://host/path', 'enc(hello)')
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler.mock.calls[0][0].message).toBe('hello')
@@ -43,7 +43,7 @@ describe('Protocol', () => {
       }
       const handler = vi.fn()
       const encrypted = new Protocol({ cipher })
-      encrypted.onReceive(handler)
+      encrypted.on(handler)
       mockScriptEvent.simulateReceive('bedrock://host/path', 'tampered')
       expect(handler).not.toHaveBeenCalled()
     })
@@ -91,10 +91,10 @@ describe('Protocol', () => {
     })
   })
 
-  describe('onReceive', () => {
+  describe('on', () => {
     it('receives events matching bedrock:// scheme', () => {
       const handler = vi.fn()
-      protocol.onReceive(handler)
+      protocol.on(handler)
       mockScriptEvent.simulateReceive('bedrock://host/path', 'hello')
       expect(handler).toHaveBeenCalledTimes(1)
       const event = handler.mock.calls[0][0]
@@ -106,7 +106,7 @@ describe('Protocol', () => {
 
     it('propagates sourceType from event', () => {
       const handler = vi.fn()
-      protocol.onReceive(handler)
+      protocol.on(handler)
       mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler.mock.calls[0][0].sourceType).toBe(ScriptEventSource.Entity)
@@ -114,14 +114,14 @@ describe('Protocol', () => {
 
     it('ignores events with non-bedrock scheme', () => {
       const handler = vi.fn()
-      protocol.onReceive(handler)
+      protocol.on(handler)
       mockScriptEvent.simulateReceive('https://example.com', '')
       expect(handler).not.toHaveBeenCalled()
     })
 
     it('handles empty message as GET', () => {
       const handler = vi.fn()
-      protocol.onReceive(handler)
+      protocol.on(handler)
       mockScriptEvent.simulateReceive('bedrock://host/path', '')
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler.mock.calls[0][0].message).toBe('')
@@ -129,7 +129,7 @@ describe('Protocol', () => {
 
     it('unsubscribe removes handler', () => {
       const handler = vi.fn()
-      const unsubscribe = protocol.onReceive(handler)
+      const unsubscribe = protocol.on(handler)
       unsubscribe()
       mockScriptEvent.simulateReceive('bedrock://host/path', '')
       expect(handler).not.toHaveBeenCalled()
@@ -138,18 +138,61 @@ describe('Protocol', () => {
     it('multiple handlers all receive events', () => {
       const handler1 = vi.fn()
       const handler2 = vi.fn()
-      protocol.onReceive(handler1)
-      protocol.onReceive(handler2)
+      protocol.on(handler1)
+      protocol.on(handler2)
       mockScriptEvent.simulateReceive('bedrock://host/path', 'msg')
       expect(handler1).toHaveBeenCalledTimes(1)
       expect(handler2).toHaveBeenCalledTimes(1)
+    })
+
+    describe('sourceType filter', () => {
+      it('filters by sourceType: Server', () => {
+        const handler = vi.fn()
+        protocol.on(handler, { sourceType: 'Server' })
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Server)
+        expect(handler).toHaveBeenCalledTimes(1)
+      })
+
+      it('filters out events with non-matching sourceType', () => {
+        const handler = vi.fn()
+        protocol.on(handler, { sourceType: 'Server' })
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+        expect(handler).not.toHaveBeenCalled()
+      })
+
+      it('filter by Entity sourceType', () => {
+        const handler = vi.fn()
+        protocol.on(handler, { sourceType: 'Entity' })
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+        expect(handler).toHaveBeenCalledTimes(1)
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Server)
+        expect(handler).toHaveBeenCalledTimes(1) // Server doesn't match Entity
+      })
+    })
+  })
+
+  describe('once', () => {
+    it('handler fires once then auto-unsubscribes', () => {
+      const handler = vi.fn()
+      protocol.once(handler)
+      mockScriptEvent.simulateReceive('bedrock://host/a', '1')
+      mockScriptEvent.simulateReceive('bedrock://host/b', '2')
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('unsubscribe prevents the handler from firing', () => {
+      const handler = vi.fn()
+      const off = protocol.once(handler)
+      off()
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg')
+      expect(handler).not.toHaveBeenCalled()
     })
   })
 
   describe('dispose', () => {
     it('stops receiving after dispose', () => {
       const handler = vi.fn()
-      protocol.onReceive(handler)
+      protocol.on(handler)
       protocol.dispose()
       mockScriptEvent.simulateReceive('bedrock://host/path', '')
       expect(handler).not.toHaveBeenCalled()
@@ -158,8 +201,8 @@ describe('Protocol', () => {
     it('clears all subscriptions', () => {
       const handler1 = vi.fn()
       const handler2 = vi.fn()
-      protocol.onReceive(handler1)
-      protocol.onReceive(handler2)
+      protocol.on(handler1)
+      protocol.on(handler2)
       protocol.dispose()
       mockScriptEvent.simulateReceive('bedrock://host/path', '')
       expect(handler1).not.toHaveBeenCalled()

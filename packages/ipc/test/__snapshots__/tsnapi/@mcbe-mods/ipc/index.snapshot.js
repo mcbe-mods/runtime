@@ -23,6 +23,7 @@ export class IPC {
   dispose() {}
   send(_, _, _) {}
   on(_, _, _) {}
+  once(_, _) {}
   channelUrl(_, _) {}
   sendBody(_, _, _) {}
   handleReceive(_, _) {}
