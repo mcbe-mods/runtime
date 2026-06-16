@@ -47,12 +47,22 @@ export class Cipher {
     return new Cipher(key, options)
   }
 
+  /**
+   * Encrypt a plaintext string.
+   * Returns the ciphertext as a base64-encoded string.
+   * @param plain - UTF-8 plaintext to encrypt
+   */
   encrypt(plain: string): string {
     const raw = utf8Encode(plain)
     const out = this.#impl.encrypt(raw)
     return Base64.fromBytes(out)
   }
 
+  /**
+   * Decrypt a base64-encoded ciphertext.
+   * Returns the original plaintext string.
+   * @param cipher - Base64-encoded ciphertext to decrypt
+   */
   decrypt(cipher: string): string {
     const raw = Base64.toBytes(cipher)
     const out = this.#impl.decrypt(raw)

@@ -29,11 +29,22 @@ export class Protocol {
     this.#cipher = options?.cipher
   }
 
+  /**
+   * Send a signal with an empty message body.
+   * Use for notifications where no payload is needed.
+   * @param url - Target URL as a string or BedrockURL
+   */
   get(url: string | BedrockURL): void {
     const id = typeof url === 'string' ? url : url.toScriptEventId()
     system.sendScriptEvent(id, '')
   }
 
+  /**
+   * Send a message with a data payload.
+   * If a cipher is configured, the message is automatically encrypted.
+   * @param url - Target URL as a string or BedrockURL
+   * @param message - The data to send
+   */
   post(url: string | BedrockURL, message: string): void {
     const id = typeof url === 'string' ? url : url.toScriptEventId()
     system.sendScriptEvent(id, this.#cipher ? this.#cipher.encrypt(message) : message)

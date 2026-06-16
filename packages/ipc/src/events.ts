@@ -4,5 +4,6 @@ export const EVENTS = {
 } as const
 
 export interface IPCEvents {
+  /** Emitted when a message handler throws or chunk assembly fails */
   [EVENTS.ERROR]: Error
 }
