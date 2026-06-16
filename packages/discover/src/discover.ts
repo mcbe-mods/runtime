@@ -39,7 +39,7 @@ export class Discover {
     this.#protocol = new Protocol()
     this.#log = new Log('Discover')
 
-    this.#protocol.onReceive((event) => {
+    this.#protocol.on((event) => {
       if (event.sourceType !== 'Server') {
         return
       }

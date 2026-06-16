@@ -73,6 +73,27 @@ describe('IPC', () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
+  describe('once', () => {
+    it('handler fires once then auto-unsubscribes', () => {
+      const handler = vi.fn()
+      ipc.once('test', handler)
+
+      simulateReceive(url('test'), '1')
+      simulateReceive(url('test'), '2')
+
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('unsubscribe prevents handler from firing', () => {
+      const handler = vi.fn()
+      const off = ipc.once('test', handler)
+      off()
+
+      simulateReceive(url('test'), '42')
+      expect(handler).not.toHaveBeenCalled()
+    })
+  })
+
   it('chunks large payloads', () => {
     const chunkIPC = new IPC({ namespace: 'test', chunkSize: 100, compressThreshold: 999999 })
     const largeData = { data: 'x'.repeat(500) }
