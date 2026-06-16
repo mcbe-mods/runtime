@@ -49,8 +49,9 @@ function createStylizer(extend: string[]): Stylizer {
       const _key = key as keyof typeof colorCodes
       const code = colorCodes[_key]
 
-      if (code)
+      if (code) {
         return createStylizer([...extend, code])
+      }
 
       return Reflect.get(target, key, receiver)
     },

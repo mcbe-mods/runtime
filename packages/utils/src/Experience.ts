@@ -12,10 +12,12 @@ export class Experience {
    * @returns {number} level up required experience
    */
   #calculateRequiredExp(level: number): number {
-    if (level < 16)
+    if (level < 16) {
       return 2 * level + 7
-    if (level < 31)
+    }
+    if (level < 31) {
       return 5 * level - 38
+    }
 
     return 9 * level - 158
   }

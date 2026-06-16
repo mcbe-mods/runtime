@@ -96,7 +96,9 @@ describe('Cipher', () => {
       const cipher = Cipher.fromKey(key, {
         randomBytes(size) {
           const buf = new Uint8Array(size)
-          for (let i = 0; i < size; i++) buf[i] = i & 0xFF
+          for (let i = 0; i < size; i++) {
+            buf[i] = i & 0xFF
+          }
           return buf
         },
       })

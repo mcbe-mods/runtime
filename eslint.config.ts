@@ -7,6 +7,7 @@ export default antfu(
     pnpm: true,
     rules: {
       'test/prefer-lowercase-title': 'off',
+      'curly': ['error', 'all'],
     },
   },
   {

@@ -6,6 +6,8 @@
 export function unique(size: number = 10): string {
   const r = (): string => Math.random().toString(36).slice(2)
   let result = r()
-  while (result.length < size) result += r()
+  while (result.length < size) {
+    result += r()
+  }
   return result.slice(0, size)
 }

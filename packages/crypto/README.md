@@ -63,7 +63,9 @@ const cipher = Cipher.fromPassword('secret', undefined, {
   randomBytes(size) {
     // Use any available random source
     const buf = new Uint8Array(size)
-    for (let i = 0; i < size; i++) buf[i] = (Math.random() * 256) | 0
+    for (let i = 0; i < size; i++) {
+      buf[i] = (Math.random() * 256) | 0
+    }
     return buf
   },
 })

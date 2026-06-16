@@ -129,8 +129,9 @@ export class Discover {
   }
 
   dispose(): void {
-    if (this.#ttlTimer !== undefined)
+    if (this.#ttlTimer !== undefined) {
       system.clearRun(this.#ttlTimer)
+    }
     for (const reg of this.#localServices.values()) {
       system.clearRun(reg.timer)
     }

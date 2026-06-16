@@ -9,8 +9,9 @@ const KEY_LENGTH = 32
 
 function defaultRandomBytes(bytesLength: number): Uint8Array {
   const out = new Uint8Array(bytesLength)
-  for (let i = 0; i < bytesLength; i++)
+  for (let i = 0; i < bytesLength; i++) {
     out[i] = (Math.random() * 256) | 0
+  }
   return out
 }
 
