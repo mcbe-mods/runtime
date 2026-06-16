@@ -23,17 +23,17 @@ Log.defaultLevel = 'debug'
 // Or set per-instance
 const log = new Log('MyAddon', { level: 'debug' })
 
+// debug takes a factory function (lazy evaluation — avoids unnecessary work)
+log.debug(() => `Expensive: ${compute()}`)
+// info/warn/error/fatal take direct values
 log.info('Hello')
 log.warn('Something suspicious', detail)
 log.error('Something broke', error)
 log.fatal('Cannot recover')
 
-// Lazy evaluation for debug (avoids unnecessary work)
-log.debug(() => `Expensive: ${compute()}`)
-
-// Child logger
-const child = new Log('MyAddon:Sub')
-child.info('scoped message')
+// Child logger (inherits parent options, can override)
+const child = new Log('MyAddon:Sub', { level: 'warn' })
+child.info('scoped message') // skipped if parent set debug but child overrode to warn
 
 // Timestamps
 Log.defaultTimestamp = true
@@ -50,6 +50,17 @@ interface LogOptions {
   dateFormat?: string // default: Log.defaultDateFormat
 }
 ```
+
+## Methods
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `debug` | `(fn: () => unknown): void` | Lazy evaluation — only calls `fn` when level ≤ `debug`. Use for expensive-to-compute values |
+| `info` | `(...args: unknown[]): void` | Direct values |
+| `warn` | `(...args: unknown[]): void` | Direct values |
+| `error` | `(...args: unknown[]): void` | Direct values |
+| `fatal` | `(...args: unknown[]): void` | Direct values |
+| `child` | `(name: string, options?: LogOptions): Log` | Creates a child logger scoped to `parentName:name`. Inherits parent's options unless overridden |
 
 ## License
 

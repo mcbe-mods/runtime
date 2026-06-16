@@ -16,7 +16,7 @@ npm install @mcbe-mods/utils
 ```
 
 ```ts
-import { color, Experience, getRadiusRange, getRandomProbability, getRandomRangeValue, ms2ticks, splitGroups } from '@mcbe-mods/utils'
+import { Base64, color, Experience, getCubeRange, getRandomProbability, getRandomRangeValue, getSphereRange, ms2ticks, splitGroups, unique } from '@mcbe-mods/utils'
 
 // splitGroups - split items into stacks
 splitGroups(65) // => [64, 1]
@@ -34,8 +34,9 @@ exp.getLevel() // => 7
 // ms2ticks - time to ticks
 ms2ticks(1000) // => 20
 
-// getRadiusRange - block position range
-getRadiusRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions
+// getCubeRange / getSphereRange - block position range
+getCubeRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions (cube)
+getSphereRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions (sphere)
 ```
 
 ## API
@@ -46,9 +47,12 @@ getRadiusRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions
 | `color` | Minecraft color/formatting code stylizer |
 | `Experience` | Player experience calculator (leveling up) |
 | `ms2ticks(ms?, ticksPerSec?, msPerSec?)` | Convert real time to game ticks |
-| `getRadiusRange(location, radius?)` | Get block positions within a radius |
+| `getCubeRange(location, radius?)` | Get block positions in a cube |
 | `getRandomProbability(probability)` | Random chance with percentage |
 | `getRandomRangeValue(min, max)` | Random integer within a range |
+| `getSphereRange(location, radius?)` | Get block positions in a sphere |
+| `unique(size?)` | Generate a random alphanumeric string |
+| `Base64` | Base64 encode/decode utility |
 | `utf8Encode(s)` | Encode string to UTF-8 bytes using `encodeURIComponent` |
 | `utf8Decode(bytes)` | Decode UTF-8 bytes back to string using `decodeURIComponent` |
 
