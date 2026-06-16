@@ -3,7 +3,7 @@ import type { DiscoverOptions, LocalRegistration, QueryEntry, RemoteEntry, Servi
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
-import { unique } from '@mcbe-mods/utils'
+import { ms2ticks, unique } from '@mcbe-mods/utils'
 import { system } from '@minecraft/server'
 
 const DISCOVER_VERSION = '1'
@@ -12,10 +12,6 @@ const DEFAULT_TTL = 15000
 
 function normalizeServiceType(hostname: string): string {
   return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
-}
-
-function msToTicks(ms: number): number {
-  return Math.ceil(ms / 50)
 }
 
 export class Discover {
@@ -102,7 +98,7 @@ export class Discover {
 
     post()
 
-    const timer = system.runInterval(post, msToTicks(this.#options.heartbeatInterval))
+    const timer = system.runInterval(post, ms2ticks(this.#options.heartbeatInterval))
 
     const registration: LocalRegistration = { fullname: hostname, meta: _meta, timer }
     this.#localServices.set(hostname, registration)
@@ -152,7 +148,7 @@ export class Discover {
           this.#notifyQueries(entry.serviceType, { type: 'service-removed', serviceType: entry.serviceType })
         }
       }
-    }, msToTicks(1000))
+    }, ms2ticks(1000))
   }
 
   #notifyQueries(serviceType: string, event: ServiceEvent<any>): void {

@@ -19,7 +19,7 @@ npm install @mcbe-mods/rpc
 ```ts
 import { RPC } from '@mcbe-mods/rpc'
 
-// Side A: handle
+// Side A: handle (duplicate registration warns and replaces previous handler)
 const server = new RPC({ namespace: 'myAddon' })
 server.handle('add', (data: { a: number, b: number }) => data.a + data.b)
 
@@ -27,6 +27,9 @@ server.handle('add', (data: { a: number, b: number }) => data.a + data.b)
 const client = new RPC({ namespace: 'myAddon' })
 const sum = await client.invoke<number>('add', { a: 1, b: 2 })
 // sum === 3
+
+// One-shot handler (auto-unsubscribes after first matching invoke)
+server.once('ping', () => 'pong')
 ```
 
 ### Timeout

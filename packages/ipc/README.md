@@ -30,6 +30,11 @@ ipc.on<{ text: string, sender: string }>('chat', (data) => {
   console.log(data.text)
 })
 
+// One-shot (auto-unsubscribes after first message)
+ipc.once('greeting', (data) => {
+  console.log('First message only:', data.text)
+})
+
 // Cancel subscription
 const off = ipc.on('channel', handler)
 off()
