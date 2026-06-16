@@ -27,6 +27,10 @@ export class Cipher {
     this.#impl = managedNonce(xchacha20poly1305, size => randomBytes(size ?? 24) as unknown as TRet<Uint8Array>)(key)
   }
 
+  static generateSalt(length: number = 16): Uint8Array {
+    return defaultRandomBytes(length)
+  }
+
   static fromPassword(password: string, salt?: string | Uint8Array, options?: CipherOptions): Cipher {
     const ikm = utf8Encode(password)
     const saltBytes = salt !== undefined

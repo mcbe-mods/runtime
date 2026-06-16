@@ -76,6 +76,32 @@ describe('Cipher', () => {
     })
   })
 
+  describe('generateSalt', () => {
+    it('returns a Uint8Array of default length 16', () => {
+      const salt = Cipher.generateSalt()
+      expect(salt).toBeInstanceOf(Uint8Array)
+      expect(salt.length).toBe(16)
+    })
+
+    it('returns a Uint8Array of custom length', () => {
+      const salt = Cipher.generateSalt(32)
+      expect(salt.length).toBe(32)
+    })
+
+    it('returns different values on each call', () => {
+      const a = Cipher.generateSalt()
+      const b = Cipher.generateSalt()
+      expect(a).not.toEqual(b)
+    })
+
+    it('can be passed to fromPassword', () => {
+      const salt = Cipher.generateSalt()
+      const cipher = Cipher.fromPassword('pw', salt)
+      const encrypted = cipher.encrypt('hello')
+      expect(cipher.decrypt(encrypted)).toBe('hello')
+    })
+  })
+
   describe('custom randomBytes', () => {
     it('uses injected randomBytes for nonce generation', () => {
       let callCount = 0

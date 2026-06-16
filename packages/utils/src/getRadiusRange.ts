@@ -5,36 +5,16 @@ export interface Location {
 }
 
 /**
- * With {@link location} as the center, get the range coordinates of the radius {@link radius}
- * @param { Location } location
- * @param { number } [radius]
- * @returns { Location[] } location
+ * With {@link location} as the center, get all coordinates within a cube of side length `(2*radius+1)`.
+ * @param location - Center position
+ * @param radius - Half side length (default 1)
+ * @returns Array of positions within the cube
  */
-export function getRadiusRange(location: Location, radius: number = 1): Location[] {
+export function getCubeRange(location: Location, radius: number = 1): Location[] {
   const centerX = location.x
   const centerY = location.y
   const centerZ = location.z
 
-  /*
-      Store a 3x3 list of square objects centered on the current square coordinates
-
-      Top view: 0 is the current square, get the coordinates of all 1's
-
-      First floor
-      111
-      111
-      111
-
-      Second layer
-      111
-      101
-      111
-
-      Third layer
-      111
-      111
-      111
-      */
   const positions: Location[] = []
 
   for (let x = centerX - radius; x <= centerX + radius; x++) {
@@ -46,3 +26,35 @@ export function getRadiusRange(location: Location, radius: number = 1): Location
   }
   return positions
 }
+
+/**
+ * With {@link location} as the center, get all coordinates within a sphere of radius {@link radius}.
+ * @param location - Center position
+ * @param radius - Sphere radius (default 1)
+ * @returns Array of positions within the sphere
+ */
+export function getSphereRange(location: Location, radius: number = 1): Location[] {
+  const centerX = location.x
+  const centerY = location.y
+  const centerZ = location.z
+  const radiusSq = radius * radius
+
+  const positions: Location[] = []
+
+  for (let x = centerX - radius; x <= centerX + radius; x++) {
+    for (let y = centerY - radius; y <= centerY + radius; y++) {
+      for (let z = centerZ - radius; z <= centerZ + radius; z++) {
+        const dx = x - centerX
+        const dy = y - centerY
+        const dz = z - centerZ
+        if (dx * dx + dy * dy + dz * dz <= radiusSq) {
+          positions.push({ x, y, z })
+        }
+      }
+    }
+  }
+  return positions
+}
+
+/** @deprecated Use `getCubeRange` instead. */
+export { getCubeRange as getRadiusRange }

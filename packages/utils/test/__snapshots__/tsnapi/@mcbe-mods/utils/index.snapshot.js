@@ -30,9 +30,11 @@ export class Experience {
 
 // #region Functions
 export function calcGameTicks(_, _, _) {}
+export function getCubeRange(_, _) {}
 export function getRadiusRange(_, _) {}
 export function getRandomProbability(_) {}
 export function getRandomRangeValue(_, _) {}
+export function getSphereRange(_, _) {}
 export function ms2ticks(_, _, _) {}
 export function splitGroups(_, _) {}
 export function unique(_) {}
