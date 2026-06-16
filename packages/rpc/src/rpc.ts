@@ -3,7 +3,7 @@ import type { RPCOptions } from './types'
 import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { Protocol } from '@mcbe-mods/protocol'
-import { unique } from '@mcbe-mods/utils'
+import { ms2ticks, unique } from '@mcbe-mods/utils'
 import { system } from '@minecraft/server'
 
 type DefaultedRPCOptions = Required<Omit<RPCOptions, 'cipher'>> & Pick<RPCOptions, 'cipher'>
@@ -191,7 +191,7 @@ export class RPC {
             this.#pending.delete(id)
             this.#sentIds.delete(id)
             reject(new Error(`RPC timeout: ${method} (${effectiveTimeout}ms)`))
-          }, Math.ceil(effectiveTimeout / 50))
+          }, ms2ticks(effectiveTimeout))
         : undefined
 
       this.#pending.set(id, {
