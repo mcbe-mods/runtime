@@ -1,6 +1,7 @@
 export { BedrockURL, URLSearchParams } from '@mcbe-mods/bedrock-url'
 export { Compressor } from '@mcbe-mods/compress'
 export { Cipher } from '@mcbe-mods/crypto'
+export type { CipherOptions } from '@mcbe-mods/crypto'
 export { Discover } from '@mcbe-mods/discover'
 export type { DiscoverOptions, ResolvedService, ServiceEvent } from '@mcbe-mods/discover'
 export { Chunker, EVENTS, IPC, PROTOCOL_VERSION } from '@mcbe-mods/ipc'

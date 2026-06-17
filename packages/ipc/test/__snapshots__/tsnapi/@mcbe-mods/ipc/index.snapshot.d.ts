@@ -19,7 +19,7 @@ export interface IPCOptions {
   compress?: DataCompressor;
   maxPacketSize?: number;
   chunkTimeout?: number;
-  cipher?: ProtocolCipher;
+  cipher?: ProtocolCipher$1;
 }
 export interface OnOptions<T = never> {
   deserializer?: Deserializer<T>;
@@ -69,4 +69,8 @@ export declare const EVENTS: {
   readonly ERROR: "error";
 };
 export declare const PROTOCOL_VERSION: "1";
+// #endregion
+
+// #region Other
+export { ProtocolCipher }
 // #endregion
