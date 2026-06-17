@@ -1,6 +1,7 @@
 export * from './base64'
 export * from './color'
 export * from './Experience'
+export * from './getCubeRange'
 export * from './getRadiusRange'
 export * from './getRandomProbability'
 export * from './getRandomRangeValue'
