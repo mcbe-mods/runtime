@@ -44,4 +44,5 @@ export function utf8Encode(_) {}
 
 // #region Variables
 export var color /* const */
+export var Color /* const */
 // #endregion
