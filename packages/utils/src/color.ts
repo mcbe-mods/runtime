@@ -64,11 +64,14 @@ function createStylizer(extend: string[]): Stylizer {
  * Text color
  * @example
  * ```js
- * color.green.italic.bold('Dedicated Ser') + color.reset('ver') + color.red.obfuscated('!!!')
+ * Color.green.italic.bold('Dedicated Ser') + Color.reset('ver') + Color.red.obfuscated('!!!')
  * // => '§a§o§lDedicated Ser§rver§c§k!!!'
  *
- * color.green.italic.bold('Dedicated Ser', color.reset('ver'), color.red.obfuscated('!!!'))
+ * Color.green.italic.bold('Dedicated Ser', Color.reset('ver'), Color.red.obfuscated('!!!'))
  * // => '§a§o§lDedicated Ser§rver§c§k!!!'
  * ```
  */
-export const color = /* #__PURE__ */ createStylizer([])
+export const Color = /* #__PURE__ */ createStylizer([])
+
+/** @deprecated Use `Color` instead. */
+export const color = Color

@@ -53,4 +53,5 @@ export declare function utf8Encode(_: string): Uint8Array;
 
 // #region Variables
 export declare const color: Stylizer;
+export declare const Color: Stylizer;
 // #endregion
