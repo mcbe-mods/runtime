@@ -33,7 +33,7 @@ const colorCodes = {
   materialAmethyst: '§u',
 } as const
 
-type StyleId = keyof typeof colorCodes
+export type StyleId = keyof typeof colorCodes
 
 export type Stylizer = {
   (...strings: string[]): string

@@ -10,6 +10,7 @@ export interface Location {
 // #endregion
 
 // #region Types
+export type StyleId = keyof typeof colorCodes;
 export type Stylizer = {
   (..._: string[]): string;
 } & { [P in StyleId]: Stylizer };
