@@ -3,8 +3,6 @@ import { BedrockURL } from '@mcbe-mods/bedrock-url'
 import { Log } from '@mcbe-mods/log'
 import { system } from '@minecraft/server'
 
-const log = new Log('Protocol')
-
 export interface ProtocolCipher {
   encrypt: (plaintext: string) => string
   decrypt: (ciphertext: string) => string
@@ -21,11 +19,13 @@ export interface BedrockReceiveEvent {
 }
 
 export class Protocol {
+  readonly #log: Log
   readonly #subscriptions = new Set<(event: BedrockReceiveEvent) => void>()
   #listener: ((event: ScriptEventCommandMessageAfterEvent) => void) | null = null
   readonly #cipher?: ProtocolCipher
 
   constructor(options?: ProtocolOptions) {
+    this.#log = new Log('Protocol')
     this.#cipher = options?.cipher
   }
 
@@ -77,7 +77,7 @@ export class Protocol {
             message = this.#cipher.decrypt(message)
           }
           catch {
-            log.warn('decryption failed, dropping message')
+            this.#log.warn('decryption failed, dropping message')
             return
           }
         }
@@ -87,7 +87,7 @@ export class Protocol {
             handler(receiveEvent)
           }
           catch (e) {
-            log.warn('handler error:', e)
+            this.#log.warn('handler error:', e)
           }
         }
       }
