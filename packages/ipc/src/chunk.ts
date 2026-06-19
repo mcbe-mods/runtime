@@ -83,6 +83,10 @@ export class Chunker {
       }
       this.#buffer.set(id, pending)
     }
+    else if (pending.compressed !== compressed) {
+      this.#buffer.delete(id)
+      return { done: false }
+    }
 
     if (pending.fragments[seq] !== undefined) {
       return { done: false }

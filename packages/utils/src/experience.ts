@@ -105,6 +105,7 @@ export class Experience {
    * @returns {this} self
    */
   setLevel(level: number): this {
+    this.#xp = 0
     this.#level = 0
     this.addLevel(level)
     return this

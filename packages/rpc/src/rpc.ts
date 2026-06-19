@@ -146,11 +146,19 @@ export class RPC {
 
     try {
       const parsed = JSON.parse(body)
-      if (parsed && typeof parsed === 'object' && 'error' in parsed) {
-        pending.reject(new Error(parsed.error as string))
+      if (parsed && typeof parsed === 'object') {
+        if ('error' in parsed) {
+          pending.reject(new Error(parsed.error as string))
+        }
+        else if ('data' in parsed) {
+          pending.resolve(parsed.data)
+        }
+        else {
+          pending.reject(new Error('RPC: invalid response format — expected {data} or {error}'))
+        }
       }
       else {
-        pending.resolve(parsed && 'data' in parsed ? parsed.data : undefined)
+        pending.reject(new Error('RPC: invalid response body'))
       }
     }
     catch {

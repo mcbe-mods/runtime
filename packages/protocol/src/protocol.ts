@@ -103,9 +103,14 @@ export class Protocol {
     }
   }
 
-  once(handler: (event: BedrockReceiveEvent) => void): () => void {
+  once(handler: (event: BedrockReceiveEvent) => void): () => void
+  once(handler: (event: BedrockReceiveEvent) => void, options: { sourceType?: ScriptEventSource }): () => void
+  once(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
     let off: () => void
     const wrapped = (event: BedrockReceiveEvent): void => {
+      if (options?.sourceType && event.sourceType !== options.sourceType) {
+        return
+      }
       off()
       handler(event)
     }

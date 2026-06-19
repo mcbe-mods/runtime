@@ -272,7 +272,7 @@ export class IPC {
 
     const seq = url.searchParams.get('seq')
     const total = url.searchParams.get('total')
-    const compressed = url.searchParams.get('c') !== null
+    const compressed = url.searchParams.get('c') === '1'
 
     if (seq !== null && total !== null) {
       this.#handleChunk(id, channel, Number(seq), Number(total), payload, compressed)
