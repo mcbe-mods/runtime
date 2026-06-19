@@ -13,6 +13,3 @@
 export function ms2ticks(milliseconds: number = 1000, gameTicksPerSecond: number = 20, millisecondsPerSecond: number = 1000): number {
   return Math.floor(milliseconds * gameTicksPerSecond / millisecondsPerSecond)
 }
-
-/** @deprecated Use `ms2ticks` instead. */
-export const calcGameTicks = ms2ticks

@@ -72,6 +72,3 @@ function createStylizer(extend: string[]): Stylizer {
  * ```
  */
 export const Color = /* #__PURE__ */ createStylizer([])
-
-/** @deprecated Use `Color` instead. */
-export const color = Color

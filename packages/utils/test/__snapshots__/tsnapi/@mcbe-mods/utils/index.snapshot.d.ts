@@ -50,8 +50,5 @@ export declare function utf8Encode(_: string): Uint8Array;
 // #endregion
 
 // #region Variables
-export declare const calcGameTicks: typeof ms2ticks;
-export declare const color: Stylizer;
 export declare const Color: Stylizer;
-export declare const getRadiusRange: typeof getCubeRange;
 // #endregion

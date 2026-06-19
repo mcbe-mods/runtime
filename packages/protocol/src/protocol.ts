@@ -113,11 +113,6 @@ export class Protocol {
     return off
   }
 
-  /** @deprecated Use `on` instead. */
-  onReceive(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
-    return options ? this.on(handler, options) : this.on(handler)
-  }
-
   dispose(): void {
     this.#subscriptions.clear()
     if (this.#listener) {
