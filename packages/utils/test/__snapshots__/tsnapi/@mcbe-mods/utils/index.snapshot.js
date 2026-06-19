@@ -29,9 +29,7 @@ export class Experience {
 // #endregion
 
 // #region Functions
-export function calcGameTicks(_, _, _) {}
 export function getCubeRange(_, _) {}
-export function getRadiusRange(_, _) {}
 export function getRandomProbability(_) {}
 export function getRandomRangeValue(_, _) {}
 export function getSphereRange(_, _) {}
@@ -43,6 +41,8 @@ export function utf8Encode(_) {}
 // #endregion
 
 // #region Variables
+export var calcGameTicks /* const */
 export var color /* const */
 export var Color /* const */
+export var getRadiusRange /* const */
 // #endregion

@@ -38,9 +38,7 @@ export declare class Experience {
 // #endregion
 
 // #region Functions
-export declare function calcGameTicks(_?: number, _?: number, _?: number): number;
 export declare function getCubeRange(_: Location, _?: number): Location[];
-export declare function getRadiusRange(_: Location, _?: number): Location[];
 export declare function getRandomProbability(_: number): boolean;
 export declare function getRandomRangeValue(_: number, _: number): number;
 export declare function getSphereRange(_: Location, _?: number): Location[];
@@ -52,6 +50,8 @@ export declare function utf8Encode(_: string): Uint8Array;
 // #endregion
 
 // #region Variables
+export declare const calcGameTicks: typeof ms2ticks;
 export declare const color: Stylizer;
 export declare const Color: Stylizer;
+export declare const getRadiusRange: typeof getCubeRange;
 // #endregion
