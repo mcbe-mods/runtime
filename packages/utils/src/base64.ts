@@ -2,7 +2,6 @@ import { utf8Decode, utf8Encode } from './textCodec'
 
 export class Base64 {
   static #CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-  static #REVERSE = Object.fromEntries([...Base64.#CHARS].map((c, i) => [c.charCodeAt(0), i]))
 
   static #toBase64(bytes: Uint8Array): string {
     let result = ''
@@ -19,10 +18,10 @@ export class Base64 {
     const sanitized = input.replace(/[^A-Z0-9+/=]/gi, '')
     const bytes: number[] = []
     for (let i = 0; i < sanitized.length; i += 4) {
-      const enc1 = Base64.#REVERSE[sanitized[i].charCodeAt(0)]
-      const enc2 = Base64.#REVERSE[sanitized[i + 1].charCodeAt(0)]
-      const enc3 = sanitized[i + 2] === '=' ? 0 : Base64.#REVERSE[sanitized[i + 2].charCodeAt(0)]
-      const enc4 = sanitized[i + 3] === '=' ? 0 : Base64.#REVERSE[sanitized[i + 3].charCodeAt(0)]
+      const enc1 = Base64.#CHARS.indexOf(sanitized[i])
+      const enc2 = Base64.#CHARS.indexOf(sanitized[i + 1])
+      const enc3 = sanitized[i + 2] === '=' ? 0 : Base64.#CHARS.indexOf(sanitized[i + 2])
+      const enc4 = sanitized[i + 3] === '=' ? 0 : Base64.#CHARS.indexOf(sanitized[i + 3])
       const b = (enc1 << 18) | (enc2 << 12) | (enc3 << 6) | enc4
       bytes.push(b >> 16 & 0xFF)
       if (sanitized[i + 2] !== '=') {
