@@ -40,8 +40,5 @@ export function utf8Encode(_) {}
 // #endregion
 
 // #region Variables
-export var calcGameTicks /* const */
-export var color /* const */
 export var Color /* const */
-export var getRadiusRange /* const */
 // #endregion

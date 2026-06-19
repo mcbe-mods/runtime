@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getCubeRange, getRadiusRange, getSphereRange } from '../src/index'
+import { getCubeRange, getSphereRange } from '../src/index'
 
 describe('getCubeRange', () => {
   it('radius 0 returns only center', () => {
@@ -33,12 +33,6 @@ describe('getCubeRange', () => {
     const positions = getCubeRange({ x: 0, y: 0, z: 0 }, 1)
     const keys = positions.map(p => `${p.x},${p.y},${p.z}`)
     expect(new Set(keys).size).toBe(positions.length)
-  })
-
-  it('getRadiusRange is a deprecated alias', () => {
-    expect(getRadiusRange).toBe(getCubeRange)
-    const result = getRadiusRange({ x: 1, y: 2, z: 3 }, 1)
-    expect(result).toHaveLength(27)
   })
 })
 
