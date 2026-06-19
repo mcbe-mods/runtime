@@ -24,7 +24,7 @@ npm install @mcbe-mods/runtime
 | `@mcbe-mods/log` | `Log` | `LogLevel`, `LogOptions` |
 | `@mcbe-mods/protocol` | `Protocol` | `BedrockReceiveEvent`, `ProtocolCipher`, `ProtocolOptions` |
 | `@mcbe-mods/rpc` | `RPC` | `RPCOptions` |
-| `@mcbe-mods/utils` | `Base64`, `color`, `unique`, `ms2ticks`, … | (all types included) |
+| `@mcbe-mods/utils` | `Base64`, `Color`, `unique`, `ms2ticks`, … | (all types included) |
 
 ```ts
 import { Base64, Cipher, Discover, IPC, Log, Protocol, RPC } from '@mcbe-mods/runtime'

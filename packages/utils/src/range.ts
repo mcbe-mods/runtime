@@ -4,12 +4,6 @@ export interface Location {
   z: number
 }
 
-/**
- * With {@link location} as the center, get all coordinates within a cube of side length `(2*radius+1)`.
- * @param location - Center position
- * @param radius - Half side length (default 1)
- * @returns Array of positions within the cube
- */
 export function getCubeRange(location: Location, radius: number = 1): Location[] {
   const centerX = location.x
   const centerY = location.y
@@ -27,12 +21,6 @@ export function getCubeRange(location: Location, radius: number = 1): Location[]
   return positions
 }
 
-/**
- * With {@link location} as the center, get all coordinates within a sphere of radius {@link radius}.
- * @param location - Center position
- * @param radius - Sphere radius (default 1)
- * @returns Array of positions within the sphere
- */
 export function getSphereRange(location: Location, radius: number = 1): Location[] {
   const centerX = location.x
   const centerY = location.y

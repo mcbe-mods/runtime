@@ -86,8 +86,6 @@ export class Discover {
    * @returns An unsubscribe function to deregister the service
    */
   register<M = Record<string, any>>(type: string, meta?: M): () => void {
-    const _meta = meta ?? {}
-
     const n = this.#nextInstanceIds.get(type) ?? 1
     this.#nextInstanceIds.set(type, n + 1)
 
@@ -95,7 +93,7 @@ export class Discover {
       ? `${type}.discover`
       : `${type.replace(/^([^.]+)/, `$1-${n}`)}.discover`
 
-    const body = JSON.stringify({ meta: _meta })
+    const body = meta !== undefined ? JSON.stringify({ meta }) : '{}'
 
     const post = (): void => {
       const nonce = unique()
@@ -110,7 +108,7 @@ export class Discover {
 
     const timer = system.runInterval(post, ms2ticks(this.#options.heartbeatInterval))
 
-    const registration: LocalRegistration = { fullname: hostname, meta: _meta, timer }
+    const registration: LocalRegistration = { fullname: hostname, meta, timer }
     this.#localServices.set(hostname, registration)
 
     return () => {
