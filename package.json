@@ -15,7 +15,7 @@
   "bugs": "https://github.com/mcbe-mods/runtime/issues",
   "scripts": {
     "lint": "eslint",
-    "build": "pnpm -r build",
+    "build": "tsdown",
     "test": "pnpm -r test",
     "release": "bumpp --recursive",
     "typecheck": "tsc --noEmit",
@@ -28,6 +28,7 @@
     "lint-staged": "catalog:cli",
     "simple-git-hooks": "catalog:cli",
     "tsdown": "catalog:cli",
+    "tsdown-stale-guard": "catalog:testing",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
   },

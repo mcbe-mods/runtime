@@ -30,14 +30,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "tsdown -F .",
+    "dev": "tsdown -F . --watch",
     "prepublishOnly": "pnpm build",
     "test": "pnpm run build && vitest"
   },
   "devDependencies": {
     "tsdown": "catalog:cli",
-    "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
