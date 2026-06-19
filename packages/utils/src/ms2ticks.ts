@@ -15,4 +15,4 @@ export function ms2ticks(milliseconds: number = 1000, gameTicksPerSecond: number
 }
 
 /** @deprecated Use `ms2ticks` instead. */
-export { ms2ticks as calcGameTicks }
+export const calcGameTicks = ms2ticks

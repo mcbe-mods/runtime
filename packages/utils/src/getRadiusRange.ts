@@ -1,2 +1,5 @@
+import { getCubeRange } from './getCubeRange'
+
 /** @deprecated Use `getCubeRange` from `./getCubeRange` instead. */
-export { getCubeRange, getCubeRange as getRadiusRange, getSphereRange, type Location } from './getCubeRange'
+export const getRadiusRange = getCubeRange
+export { getCubeRange, getSphereRange, type Location } from './getCubeRange'
