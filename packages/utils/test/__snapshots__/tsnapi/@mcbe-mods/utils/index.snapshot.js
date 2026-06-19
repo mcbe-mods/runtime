@@ -4,7 +4,6 @@
 // #region Classes
 export class Base64 {
   static CHARS
-  static REVERSE
   static toBase64(_) {}
   static fromBase64(_) {}
   static encode(_) {}
