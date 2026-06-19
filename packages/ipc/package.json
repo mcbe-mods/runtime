@@ -32,8 +32,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "tsdown -F .",
+    "dev": "tsdown -F . --watch",
     "prepublishOnly": "pnpm build",
     "test": "pnpm run build && vitest",
     "bench": "vitest bench"
@@ -50,12 +50,8 @@
   "devDependencies": {
     "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
-    "tsdown-stale-guard": "catalog:testing",
     "tsnapi": "catalog:testing",
     "typescript": "catalog:cli",
     "vitest": "catalog:testing"
-  },
-  "inlinedDependencies": {
-    "mini-emit": "1.0.0-beta.0"
   }
 }
