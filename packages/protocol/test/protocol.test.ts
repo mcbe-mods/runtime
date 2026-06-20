@@ -187,6 +187,28 @@ describe('Protocol', () => {
       mockScriptEvent.simulateReceive('bedrock://host/path', 'msg')
       expect(handler).not.toHaveBeenCalled()
     })
+
+    it('filters by sourceType: Server', () => {
+      const handler = vi.fn()
+      protocol.once(handler, { sourceType: 'Server' })
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Server)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
+
+    it('filters out events with non-matching sourceType', () => {
+      const handler = vi.fn()
+      protocol.once(handler, { sourceType: 'Server' })
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+      expect(handler).not.toHaveBeenCalled()
+    })
+
+    it('with sourceType filter fires only once', () => {
+      const handler = vi.fn()
+      protocol.once(handler, { sourceType: 'Server' })
+      mockScriptEvent.simulateReceive('bedrock://host/a', '1', ScriptEventSource.Server)
+      mockScriptEvent.simulateReceive('bedrock://host/b', '2', ScriptEventSource.Server)
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('dispose', () => {
