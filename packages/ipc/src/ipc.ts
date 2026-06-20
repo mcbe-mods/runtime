@@ -26,6 +26,7 @@ const DEFAULT_OPTIONS: DefaultedIPCOptions = {
 }
 
 const IPC_HOST_SUFFIX = '.ipc'
+const MAX_INFLIGHT_IDS = 1000
 
 /**
  * IPC (Inter-Pack Communication) — message passing between Minecraft Bedrock behavior packs.
@@ -49,7 +50,7 @@ export class IPC {
   readonly #compressor?: DataCompressor
   readonly #chunker: Chunker
   readonly #onHandlers = new Map<string, Set<(data: string) => void>>()
-  readonly #sentIds = new Set<string>()
+  readonly #sentIds = new Map<string, number>()
   #protocolUnsubscribe: () => void
   #disposed = false
 
@@ -129,7 +130,11 @@ export class IPC {
   send<T>(channel: string, data: T, options: SendOptions<T>): void
   send<T = never>(channel: string, data?: T, options?: SendOptions<T>): void {
     const id = unique()
-    this.#sentIds.add(id)
+    this.#cleanStaleIds()
+    if (this.#sentIds.size >= MAX_INFLIGHT_IDS) {
+      throw new Error('too many inflight messages')
+    }
+    this.#sentIds.set(id, Date.now())
 
     const body: string = data !== undefined
       ? (options?.serializer
@@ -206,6 +211,16 @@ export class IPC {
     }
     off = options ? this.on(channel, wrapped, options) : this.on(channel, wrapped)
     return off
+  }
+
+  #cleanStaleIds(): void {
+    const now = Date.now()
+    for (const [id, timestamp] of this.#sentIds) {
+      if (now - timestamp > this.#options.chunkTimeout * 2) {
+        this.#sentIds.delete(id)
+        this.events.emit(EVENTS.ERROR, new Error(`Message ${id} timed out`))
+      }
+    }
   }
 
   #channelUrl(channel: string, params: Record<string, string>): string {

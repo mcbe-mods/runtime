@@ -19,6 +19,9 @@ export class Log {
   readonly #dateFormat?: string
 
   constructor(name: string, options?: LogOptions) {
+    if (typeof name !== 'string' || !name) {
+      throw new TypeError('Log name must be a non-empty string')
+    }
     this.#name = name
     this.#level = options?.level
     this.#timestamp = options?.timestamp
@@ -36,16 +39,23 @@ export class Log {
       return
     }
     if (typeof fnOrArg === 'function') {
-      const val = (fnOrArg as () => unknown)()
+      let val: unknown
+      try {
+        val = (fnOrArg as () => unknown)()
+      }
+      catch (e) {
+        console.error(this.#format('error'), `thunk threw: ${e}`)
+        return
+      }
       if (val !== undefined) {
-        console.log(this.#format(), val)
+        console.log(this.#format('debug'), val)
       }
       else {
-        console.log(this.#format())
+        console.log(this.#format('debug'))
       }
     }
     else {
-      console.log(this.#format(), fnOrArg, ...rest)
+      console.log(this.#format('debug'), fnOrArg, ...rest)
     }
   }
 
@@ -53,28 +63,28 @@ export class Log {
     if (LEVELS[this.level] > LEVELS.info) {
       return
     }
-    console.info(this.#format(), ...args)
+    console.info(this.#format('info'), ...args)
   }
 
   warn(...args: unknown[]): void {
     if (LEVELS[this.level] > LEVELS.warn) {
       return
     }
-    console.warn(this.#format(), ...args)
+    console.warn(this.#format('warn'), ...args)
   }
 
   error(...args: unknown[]): void {
     if (LEVELS[this.level] > LEVELS.error) {
       return
     }
-    console.error(this.#format(), ...args)
+    console.error(this.#format('error'), ...args)
   }
 
   fatal(...args: unknown[]): void {
     if (LEVELS[this.level] > LEVELS.fatal) {
       return
     }
-    console.error(this.#format(), ...args)
+    console.error(this.#format('fatal'), ...args)
   }
 
   child(name: string, options?: LogOptions): Log {
@@ -86,8 +96,8 @@ export class Log {
     })
   }
 
-  #format(): string {
-    let prefix = ''
+  #format(level: string): string {
+    let prefix = `[${level}] `
     const showTimestamp = this.#timestamp ?? Log.defaultTimestamp
     if (showTimestamp) {
       const fmt = this.#dateFormat ?? Log.defaultDateFormat

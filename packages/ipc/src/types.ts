@@ -37,14 +37,7 @@ export interface IPCOptions {
   /** Namespace used in URLs: `bedrock://<namespace>.ipc/<channel>`. @default 'global' */
   namespace?: string
   /**
-   * If a payload (or already compressed payload) exceeds this many **bytes**
-   * (not characters), it will be split into chunks.
-   *
-   * Minecraft's `/scriptevent` command has a **2048-byte** message limit:
-   * @see https://learn.microsoft.com/en-us/minecraft/creator/reference/content/commandsreference/examples/commands/scriptevent?view=minecraft-bedrock-stable#usage
-   *
-   * With `compressToBase64`, each character is 1 byte,
-   * so the safe value keeps each chunk data slice + URL overhead ≤ 2048.
+   * Size of each chunk in UTF-16 code units (not bytes). Non-ASCII characters may occupy multiple code units.
    * @default 1800
    */
   chunkSize?: number

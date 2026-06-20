@@ -9,6 +9,7 @@ import { system } from '@minecraft/server'
 const DISCOVER_VERSION = '1'
 const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
+const MAX_INFLIGHT_IDS = 1000
 
 function normalizeServiceType(hostname: string): string {
   return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
@@ -24,7 +25,7 @@ export class Discover {
   #remoteCache = new Map<string, RemoteEntry>()
   #queries = new Map<number, QueryEntry>()
   #queryIdCounter = 0
-  #sentIds = new Set<string>()
+  #sentIds = new Map<string, number>()
   #ttlTimer: number | undefined
 
   /**
@@ -54,7 +55,7 @@ export class Discover {
       }
 
       const hostname = event.url.hostname
-      const serviceType = normalizeServiceType(hostname)
+      const serviceType = event.url.searchParams.get('t') ?? normalizeServiceType(hostname)
 
       let meta: unknown
       try {
@@ -86,6 +87,9 @@ export class Discover {
    * @returns An unsubscribe function to deregister the service
    */
   register<M = Record<string, any>>(type: string, meta?: M): () => void {
+    if (typeof type !== 'string' || !type || type.startsWith('.') || type.endsWith('.') || type.length > 255) {
+      throw new TypeError('Invalid serviceType')
+    }
     const n = this.#nextInstanceIds.get(type) ?? 1
     this.#nextInstanceIds.set(type, n + 1)
 
@@ -97,10 +101,23 @@ export class Discover {
 
     const post = (): void => {
       const nonce = unique()
-      this.#sentIds.add(nonce)
+      const now = Date.now()
+      for (const [id, ts] of this.#sentIds) {
+        if (now - ts > this.#options.ttl) {
+          this.#sentIds.delete(id)
+        }
+      }
+      if (this.#sentIds.size >= MAX_INFLIGHT_IDS) {
+        const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+        if (oldest) {
+          this.#sentIds.delete(oldest[0])
+        }
+      }
+      this.#sentIds.set(nonce, now)
       const url = new BedrockURL(`bedrock://${hostname}/`)
       url.searchParams.set('v', DISCOVER_VERSION)
       url.searchParams.set('i', nonce)
+      url.searchParams.set('t', type)
       this.#protocol.post(url, body)
     }
 
@@ -125,6 +142,9 @@ export class Discover {
    * @returns An unsubscribe function to stop listening
    */
   query<M = Record<string, any>>(type: string, callback: (event: ServiceEvent<M>) => void): () => void {
+    if (typeof type !== 'string' || !type || type.startsWith('.') || type.endsWith('.') || type.length > 255) {
+      throw new TypeError('Invalid serviceType')
+    }
     const id = ++this.#queryIdCounter
     this.#queries.set(id, { type, callback })
 

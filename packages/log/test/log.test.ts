@@ -55,7 +55,7 @@ describe('Log', () => {
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('MyLogger')
       log.warn('hello')
-      expect(spy).toHaveBeenCalledWith('[MyLogger]', 'hello')
+      expect(spy).toHaveBeenCalledWith('[warn] [MyLogger]', 'hello')
       spy.mockRestore()
     })
 
@@ -70,12 +70,12 @@ describe('Log', () => {
       debugLogger.warn('A')
       errorLogger.warn('B')
       expect(spyWarn).toHaveBeenCalledOnce()
-      expect(spyWarn).toHaveBeenCalledWith('[Debug]', 'A')
+      expect(spyWarn).toHaveBeenCalledWith('[warn] [Debug]', 'A')
 
       debugLogger.info('C')
       errorLogger.info('D')
       expect(spyInfo).toHaveBeenCalledOnce()
-      expect(spyInfo).toHaveBeenCalledWith('[Debug]', 'C')
+      expect(spyInfo).toHaveBeenCalledWith('[info] [Debug]', 'C')
 
       spyInfo.mockRestore()
       spyWarn.mockRestore()
@@ -88,7 +88,7 @@ describe('Log', () => {
       const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
       const log = new Log('Test')
       log.debug('hello', 'world')
-      expect(spy).toHaveBeenCalledWith('[Test]', 'hello', 'world')
+      expect(spy).toHaveBeenCalledWith('[debug] [Test]', 'hello', 'world')
       spy.mockRestore()
     })
 
@@ -99,7 +99,7 @@ describe('Log', () => {
       const log = new Log('Test')
       log.debug(fn)
       expect(fn).toHaveBeenCalledOnce()
-      expect(spy).toHaveBeenCalledWith('[Test]', 'result')
+      expect(spy).toHaveBeenCalledWith('[debug] [Test]', 'result')
       spy.mockRestore()
     })
 
@@ -130,7 +130,7 @@ describe('Log', () => {
       const parent = new Log('Parent')
       const child = parent.child('Child')
       child.warn('test')
-      expect(spy).toHaveBeenCalledWith('[Parent:Child]', 'test')
+      expect(spy).toHaveBeenCalledWith('[warn] [Parent:Child]', 'test')
       spy.mockRestore()
     })
 
@@ -140,7 +140,7 @@ describe('Log', () => {
       const child = parent.child('Child')
       child.warn('test')
       const args = spy.mock.calls[0]
-      expect(args[0]).toMatch(/^\[\d{2}:\d{2}:\d{2}\]/)
+      expect(args[0]).toMatch(/^\[warn\] \[\d{2}:\d{2}:\d{2}\]/)
       spy.mockRestore()
     })
 
@@ -150,7 +150,7 @@ describe('Log', () => {
       const child = parent.child('Child', { timestamp: true })
       child.warn('test')
       const args = spy.mock.calls[0]
-      expect(args[0]).toMatch(/^\[\d{2}:\d{2}:\d{2}\]/)
+      expect(args[0]).toMatch(/^\[warn\] \[\d{2}:\d{2}:\d{2}\]/)
       spy.mockRestore()
     })
   })
@@ -163,7 +163,7 @@ describe('Log', () => {
       log.warn('msg')
       expect(spy).toHaveBeenCalledOnce()
       const args = spy.mock.calls[0]
-      expect(args[0]).toMatch(/^\[\d{2}:\d{2}:\d{2}\]/)
+      expect(args[0]).toMatch(/^\[warn\] \[\d{2}:\d{2}:\d{2}\]/)
       expect(args[1]).toBe('msg')
       spy.mockRestore()
     })
@@ -173,7 +173,7 @@ describe('Log', () => {
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const log = new Log('Test')
       log.warn('msg')
-      expect(spy).toHaveBeenCalledWith('[Test]', 'msg')
+      expect(spy).toHaveBeenCalledWith('[warn] [Test]', 'msg')
       spy.mockRestore()
     })
 
@@ -183,7 +183,7 @@ describe('Log', () => {
       const log = new Log('Test', { timestamp: true })
       log.warn('msg')
       const args = spy.mock.calls[0]
-      expect(args[0]).toMatch(/^\[\d{2}:\d{2}:\d{2}\]/)
+      expect(args[0]).toMatch(/^\[warn\] \[\d{2}:\d{2}:\d{2}\]/)
       spy.mockRestore()
     })
 
@@ -194,7 +194,7 @@ describe('Log', () => {
       const log = new Log('Test')
       log.warn('year')
       const args = spy.mock.calls[0]
-      expect(args[0]).toMatch(/^\[\d{4}\]/)
+      expect(args[0]).toMatch(/^\[warn\] \[\d{4}\]/)
       spy.mockRestore()
     })
   })
