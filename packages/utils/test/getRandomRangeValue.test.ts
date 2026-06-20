@@ -29,4 +29,8 @@ describe('getRandomRangeValue', () => {
     expect(getRandomRangeValue(1.2, 5.9)).toBe(2)
     vi.restoreAllMocks()
   })
+
+  it('throws RangeError when min > max', () => {
+    expect(() => getRandomRangeValue(10, 5)).toThrow(RangeError)
+  })
 })

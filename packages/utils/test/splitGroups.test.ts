@@ -29,4 +29,13 @@ describe('splitGroups', () => {
   it('sum equals groupSize exactly → [groupSize]', () => {
     expect(splitGroups(16, 16)).toEqual([16])
   })
+
+  it('throws RangeError when groupSize <= 0', () => {
+    expect(() => splitGroups(10, 0)).toThrow(RangeError)
+    expect(() => splitGroups(10, -1)).toThrow(RangeError)
+  })
+
+  it('throws RangeError when sum < 0', () => {
+    expect(() => splitGroups(-1)).toThrow(RangeError)
+  })
 })

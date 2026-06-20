@@ -23,10 +23,10 @@ export class Log {
       throw new TypeError('Log name must be a non-empty string')
     }
     this.#name = name
-    this.#level = options?.level ?? Log.defaultLevel
-    if (!(this.#level in LEVELS)) {
-      throw new TypeError(`Invalid log level: ${this.#level}`)
+    if (options?.level !== undefined && !(options.level in LEVELS)) {
+      throw new TypeError(`Invalid log level: ${options.level}`)
     }
+    this.#level = options?.level ?? Log.defaultLevel
     this.#timestamp = options?.timestamp
     this.#dateFormat = options?.dateFormat
   }
@@ -91,6 +91,9 @@ export class Log {
   }
 
   child(name: string, options?: LogOptions): Log {
+    if (typeof name !== 'string' || !name) {
+      throw new TypeError('Log name must be a non-empty string')
+    }
     const childName = this.#name ? `${this.#name}:${name}` : name
     return new Log(childName, {
       level: options?.level ?? this.#level,
