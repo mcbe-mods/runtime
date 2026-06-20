@@ -11,7 +11,7 @@ const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
 const MAX_INFLIGHT_IDS = 1000
 
-function normalizeServiceType(hostname: string): string {
+export function normalizeServiceType(hostname: string): string {
   return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
 }
 
@@ -36,6 +36,9 @@ export class Discover {
     this.#options = {
       heartbeatInterval: options.heartbeatInterval ?? DEFAULT_HEARTBEAT_INTERVAL,
       ttl: options.ttl ?? DEFAULT_TTL,
+    }
+    if (this.#options.ttl < this.#options.heartbeatInterval) {
+      throw new RangeError('ttl must be >= heartbeatInterval')
     }
     this.#protocol = new Protocol()
     this.#log = new Log('Discover')
@@ -166,6 +169,9 @@ export class Discover {
     for (const reg of this.#localServices.values()) {
       system.clearRun(reg.timer)
     }
+    for (const [, entry] of this.#remoteCache) {
+      this.#notifyQueries(entry.serviceType, { type: 'service-removed', serviceType: entry.serviceType })
+    }
     this.#protocol.dispose()
     this.#localServices.clear()
     this.#remoteCache.clear()
@@ -178,7 +184,7 @@ export class Discover {
     this.#ttlTimer = system.runInterval(() => {
       const now = Date.now()
       for (const [hostname, entry] of this.#remoteCache) {
-        if (now - entry.lastSeen > this.#options.ttl) {
+        if (now - entry.lastSeen >= this.#options.ttl) {
           this.#remoteCache.delete(hostname)
           this.#notifyQueries(entry.serviceType, { type: 'service-removed', serviceType: entry.serviceType })
         }
@@ -193,7 +199,7 @@ export class Discover {
           query.callback(event)
         }
         catch (e) {
-          this.#log.warn(`Query callback error: ${e}`)
+          this.#log.warn('Query callback error:', e)
         }
       }
     }

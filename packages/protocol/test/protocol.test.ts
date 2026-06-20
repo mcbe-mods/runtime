@@ -166,7 +166,8 @@ describe('Protocol', () => {
         mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.EntityEvent)
         expect(handler).toHaveBeenCalledTimes(1)
         mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Server)
-        expect(handler).toHaveBeenCalledTimes(1) // Server doesn't match EntityEvent
+        // second event filtered out — sourceType Server !== EntityEvent
+        expect(handler).toHaveBeenCalledTimes(1)
       })
     })
   })

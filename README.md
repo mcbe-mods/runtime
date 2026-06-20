@@ -24,9 +24,9 @@ Monorepo for Minecraft Bedrock Edition Script API runtime packages.
 Pick what you need:
 
 ```bash
-npm install @mcbe-mods/runtime       # all packages
-npm install @mcbe-mods/rpc           # RPC only
-npm install @mcbe-mods/ipc           # IPC only
+pnpm add @mcbe-mods/runtime       # all packages
+pnpm add @mcbe-mods/rpc           # RPC only
+pnpm add @mcbe-mods/ipc           # IPC only
 # etc.
 ```
 

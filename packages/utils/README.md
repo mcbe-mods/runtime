@@ -46,7 +46,7 @@ getSphereRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions (sphere)
 | `splitGroups(sum, groupSize?)` | Split a number into groups of a given size |
 | `Color` | Minecraft color/formatting code stylizer |
 | `Experience` | Player experience calculator (leveling up) |
-| `ms2ticks(ms?, ticksPerSec?, msPerSec?)` | Convert real time to game ticks |
+| `ms2ticks(milliseconds?, gameTicksPerSecond?, millisecondsPerSecond?)` | Convert real time to game ticks |
 | `getCubeRange(location, radius?)` | Get block positions in a cube |
 | `getRandomProbability(probability)` | Random chance with percentage |
 | `getRandomRangeValue(min, max)` | Random integer within a range |

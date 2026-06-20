@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 22.x
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
@@ -51,8 +51,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # =========================
-      # 4. Publish (monorepo aware)
+      # 4. Dry-run then Publish
       # =========================
+      - name: Dry-run publish
+        run: pnpm -r publish --dry-run --access public
+
       - name: Publish to npm
         run: |
           pnpm -r publish \

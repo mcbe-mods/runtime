@@ -1,3 +1,4 @@
+import { Base64, utf8Encode } from '@mcbe-mods/utils'
 import { describe, expect, it } from 'vitest'
 import { Compressor } from '../src/compress'
 
@@ -15,7 +16,9 @@ describe('Compressor', () => {
     const c = new Compressor()
     const original = 'A'.repeat(1000)
     const compressed = c.compress(original)
-    expect(compressed.length).toBeLessThan(original.length)
+    const originalBytes = utf8Encode(original).length
+    const compressedBytes = Base64.toBytes(compressed).length
+    expect(compressedBytes).toBeLessThan(originalBytes)
   })
 
   it('decompresses back to original', () => {
@@ -42,5 +45,16 @@ describe('Compressor', () => {
   it('throws on decompression failure', () => {
     const c = new Compressor()
     expect(() => c.decompress('!!!invalid-base64!!!')).toThrow()
+  })
+
+  it('throws on valid base64 but invalid deflate data', () => {
+    const c = new Compressor()
+    expect(() => c.decompress('AAAA')).toThrow()
+  })
+
+  it('throws on truncated base64', () => {
+    const c = new Compressor()
+    // Valid base64-shape but not valid deflate data of expected length
+    expect(() => c.decompress('YWJj')).toThrow()
   })
 })

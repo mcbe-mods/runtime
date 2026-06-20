@@ -1,5 +1,7 @@
+import { Compressor } from '@mcbe-mods/compress'
 import { system } from '@minecraft/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { EVENTS } from '../src/events'
 import { IPC } from '../src/ipc'
 import { simulateReceive } from './setup'
 
@@ -246,6 +248,87 @@ describe('IPC', () => {
     ipc.on('test', handler)
 
     simulateReceive('bedrock://test.ipc/test?v=1', '42')
+
+    expect(handler).not.toHaveBeenCalled()
+  })
+
+  it('throws when send is called after dispose', () => {
+    ipc.dispose()
+    expect(() => ipc.send('test', 'data')).toThrow('IPC is disposed')
+  })
+
+  it('emits error event when handler throws', () => {
+    const errorHandler = vi.fn()
+    ipc.events.on(EVENTS.ERROR, errorHandler)
+
+    ipc.on('test', () => {
+      throw new Error('handler error')
+    })
+
+    simulateReceive(url('test'), '"hello"')
+
+    expect(errorHandler).toHaveBeenCalledTimes(1)
+    expect(errorHandler).toHaveBeenCalledWith(new Error('handler error'))
+  })
+
+  it('chunk timeout discards partial assembly', () => {
+    const chunkIPC = new IPC({ namespace: 'test', chunkTimeout: 1000 })
+    const handler = vi.fn()
+    chunkIPC.on('big', handler)
+
+    // Send first chunk only
+    simulateReceive('bedrock://test.ipc/big?v=1&id=TIMEOUT&seq=0&total=2', 'part1')
+
+    // Advance time past timeout
+    vi.advanceTimersByTime(1500)
+
+    // Send second chunk — should not complete because first was discarded
+    simulateReceive('bedrock://test.ipc/big?v=1&id=TIMEOUT&seq=1&total=2', 'part2')
+
+    expect(handler).not.toHaveBeenCalled()
+  })
+
+  it('compresses data when compressor is configured', () => {
+    const compIPC = new IPC({ namespace: 'test', compress: new Compressor(), compressThreshold: 100 })
+    const data = 'A'.repeat(500)
+    compIPC.send('comp', data)
+
+    const [url, payload] = (system.sendScriptEvent as any).mock.calls[0]
+    expect(url).toMatch(/[?&]c=1(?:&|$)/)
+    expect(payload).not.toBe(JSON.stringify(data))
+  })
+
+  it('decompresses data on receive when c=1 flag is present', () => {
+    const compIPC = new IPC({ namespace: 'test', compress: new Compressor(), compressThreshold: 100 })
+    const handler = vi.fn()
+    compIPC.on<{ msg: string }>('comp', handler)
+
+    // Manually compress JSON data and send with c=1
+    const data = { msg: 'A'.repeat(500) }
+    const compressed = new Compressor().compress(JSON.stringify(data))
+
+    simulateReceive(`bedrock://test.ipc/comp?v=1&id=CID&c=1`, compressed)
+
+    expect(handler).toHaveBeenCalledWith(data)
+  })
+
+  it('emits error when c=1 received but no compressor configured', () => {
+    const errorHandler = vi.fn()
+    ipc.events.on(EVENTS.ERROR, errorHandler)
+    ipc.on('test', vi.fn())
+
+    simulateReceive(`bedrock://test.ipc/test?v=1&id=NOCOMP&c=1`, 'compressed-data')
+
+    expect(errorHandler).toHaveBeenCalledWith(
+      new Error('Received compressed packet but no compressor configured'),
+    )
+  })
+
+  it('ignores hostname ending with .ipc but empty namespace', () => {
+    const handler = vi.fn()
+    ipc.on('test', handler)
+
+    simulateReceive('bedrock://.ipc/test?v=1&id=ID', '42')
 
     expect(handler).not.toHaveBeenCalled()
   })

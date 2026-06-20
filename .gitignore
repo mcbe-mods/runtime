@@ -3,8 +3,11 @@
 .idea
 *.log
 *.tgz
+*.tsbuildinfo
+.pnpm-debug.log
 coverage
 dist
+.env
 lib-cov
 logs
 node_modules

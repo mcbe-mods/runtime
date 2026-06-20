@@ -6,7 +6,7 @@
     "access": "public"
   },
   "packageManager": "pnpm@10.33.1",
-  "description": "Deflate compression for MCBE Script API — fflate-based Compressor with threshold",
+  "description": "Deflate compression for MCBE Script API — fflate-based Compressor",
   "author": "Lete114",
   "license": "MIT",
   "homepage": "https://github.com/mcbe-mods/runtime#readme",

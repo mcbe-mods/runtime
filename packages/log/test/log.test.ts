@@ -24,6 +24,22 @@ describe('Log', () => {
       spy.mockRestore()
     })
 
+    it('info outputs with [info] prefix', () => {
+      const spy = vi.spyOn(console, 'info').mockImplementation(() => {})
+      const log = new Log('Test')
+      log.info('hello')
+      expect(spy).toHaveBeenCalledWith('[info] [Test]', 'hello')
+      spy.mockRestore()
+    })
+
+    it('error outputs with [error] prefix', () => {
+      const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const log = new Log('Test')
+      log.error('fail')
+      expect(spy).toHaveBeenCalledWith('[error] [Test]', 'fail')
+      spy.mockRestore()
+    })
+
     it('suppresses when level is below threshold', () => {
       Log.defaultLevel = 'warn'
       const spy = vi.spyOn(console, 'info' as any).mockImplementation(() => {})
@@ -152,6 +168,20 @@ describe('Log', () => {
       const args = spy.mock.calls[0]
       expect(args[0]).toMatch(/^\[warn\] \[\d{2}:\d{2}:\d{2}\]/)
       spy.mockRestore()
+    })
+  })
+
+  describe('name validation', () => {
+    it('throws for empty string name', () => {
+      expect(() => new Log('')).toThrow(TypeError)
+    })
+
+    it('throws for null name', () => {
+      expect(() => new Log(null as any)).toThrow(TypeError)
+    })
+
+    it('throws for invalid level', () => {
+      expect(() => new Log('Test', { level: 'invalid' as any })).toThrow(TypeError)
     })
   })
 

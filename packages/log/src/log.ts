@@ -14,7 +14,7 @@ export class Log {
   static defaultDateFormat = 'HH:mm:ss'
 
   readonly #name: string
-  readonly #level?: LogLevel
+  readonly #level: LogLevel
   readonly #timestamp?: boolean
   readonly #dateFormat?: string
 
@@ -23,7 +23,10 @@ export class Log {
       throw new TypeError('Log name must be a non-empty string')
     }
     this.#name = name
-    this.#level = options?.level
+    this.#level = options?.level ?? Log.defaultLevel
+    if (!(this.#level in LEVELS)) {
+      throw new TypeError(`Invalid log level: ${this.#level}`)
+    }
     this.#timestamp = options?.timestamp
     this.#dateFormat = options?.dateFormat
   }
