@@ -22,8 +22,8 @@
     "build": "tsdown",
     "test": "pnpm -r test",
     "release": "bumpp --recursive",
-    "typecheck": "tsc",
-    "prepare": "npx simple-git-hooks"
+    "typecheck": "tsc --noEmit",
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
