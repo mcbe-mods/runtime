@@ -11,6 +11,7 @@ type DefaultedRPCOptions = Required<Omit<RPCOptions, 'cipher'>> & Pick<RPCOption
 const DEFAULT_OPTIONS: DefaultedRPCOptions = {
   namespace: 'global',
   timeout: 5000,
+  maxInflightIds: 1000,
 }
 
 const RPC_REQ_SUFFIX = '.req.rpc'
@@ -46,7 +47,7 @@ export class RPC {
   readonly #log: Log
   readonly #pending = new Map<string, PendingInvoke>()
   readonly #handlers = new Map<string, (data: unknown) => unknown>()
-  readonly #sentIds = new Set<string>()
+  readonly #sentIds = new Map<string, number>()
   #unsubscribe: () => void
   #disposed = false
 
@@ -189,7 +190,13 @@ export class RPC {
       throw new TypeError('Invalid method name')
     }
     const id = unique()
-    this.#sentIds.add(id)
+    if (this.#sentIds.size >= this.#options.maxInflightIds) {
+      const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+      if (oldest) {
+        this.#sentIds.delete(oldest[0])
+      }
+    }
+    this.#sentIds.set(id, Date.now())
 
     const effectiveTimeout = timeout ?? this.#options.timeout
     // null → JSON.stringify → 'null', undefined → ''

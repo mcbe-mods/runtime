@@ -69,6 +69,11 @@ export interface IPCOptions {
    */
   chunkTimeout?: number
   /**
+   * Maximum number of in-flight message IDs tracked for loopback detection.
+   * When exceeded, the oldest entry is evicted. @default 1000
+   */
+  maxInflightIds?: number
+  /**
    * Optional cipher for encrypting/decrypting protocol messages.
    * If provided, all IPC messages will be encrypted at the transport layer.
    * @see ProtocolCipher

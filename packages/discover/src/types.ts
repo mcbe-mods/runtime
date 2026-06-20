@@ -1,6 +1,8 @@
 export interface DiscoverOptions {
   heartbeatInterval?: number
   ttl?: number
+  /** Maximum number of in-flight nonces tracked for loopback detection. @default 1000 */
+  maxInflightIds?: number
 }
 
 export interface ResolvedService<M = Record<string, any>> {

@@ -23,10 +23,10 @@ const DEFAULT_OPTIONS: DefaultedIPCOptions = {
   compressThreshold: 800,
   maxPacketSize: 1_000_000,
   chunkTimeout: 30_000,
+  maxInflightIds: 1000,
 }
 
 const IPC_HOST_SUFFIX = '.ipc'
-const MAX_INFLIGHT_IDS = 1000
 
 /**
  * IPC (Inter-Pack Communication) — message passing between Minecraft Bedrock behavior packs.
@@ -134,8 +134,11 @@ export class IPC {
     }
     const id = unique()
     this.#cleanStaleIds()
-    if (this.#sentIds.size >= MAX_INFLIGHT_IDS) {
-      throw new Error('too many inflight messages')
+    if (this.#sentIds.size >= this.#options.maxInflightIds) {
+      const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+      if (oldest) {
+        this.#sentIds.delete(oldest[0])
+      }
     }
     this.#sentIds.set(id, Date.now())
 

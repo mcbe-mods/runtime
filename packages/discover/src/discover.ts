@@ -9,7 +9,6 @@ import { system } from '@minecraft/server'
 const DISCOVER_VERSION = '1'
 const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
-const MAX_INFLIGHT_IDS = 1000
 
 export function normalizeServiceType(hostname: string): string {
   return hostname.replace(/\.discover$/, '').replace(/^\d+\./, '')
@@ -36,6 +35,7 @@ export class Discover {
     this.#options = {
       heartbeatInterval: options.heartbeatInterval ?? DEFAULT_HEARTBEAT_INTERVAL,
       ttl: options.ttl ?? DEFAULT_TTL,
+      maxInflightIds: options.maxInflightIds ?? 1000,
     }
     if (this.#options.ttl < this.#options.heartbeatInterval) {
       throw new RangeError('ttl must be >= heartbeatInterval')
@@ -108,7 +108,7 @@ export class Discover {
           this.#sentIds.delete(id)
         }
       }
-      if (this.#sentIds.size >= MAX_INFLIGHT_IDS) {
+      if (this.#sentIds.size >= this.#options.maxInflightIds) {
         const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
         if (oldest) {
           this.#sentIds.delete(oldest[0])
