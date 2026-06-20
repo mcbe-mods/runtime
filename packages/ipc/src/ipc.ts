@@ -23,6 +23,7 @@ const DEFAULT_OPTIONS: DefaultedIPCOptions = {
   compressThreshold: 800,
   maxPacketSize: 1_000_000,
   chunkTimeout: 30_000,
+  maxInflightIds: 1000,
 }
 
 const IPC_HOST_SUFFIX = '.ipc'
@@ -49,7 +50,7 @@ export class IPC {
   readonly #compressor?: DataCompressor
   readonly #chunker: Chunker
   readonly #onHandlers = new Map<string, Set<(data: string) => void>>()
-  readonly #sentIds = new Set<string>()
+  readonly #sentIds = new Map<string, number>()
   #protocolUnsubscribe: () => void
   #disposed = false
 
@@ -78,7 +79,7 @@ export class IPC {
         return
       }
       const ns = event.url.hostname.slice(0, -IPC_HOST_SUFFIX.length)
-      if (ns !== this.#options.namespace) {
+      if (ns.length === 0 || ns !== this.#options.namespace) {
         return
       }
       try {
@@ -128,8 +129,18 @@ export class IPC {
   send<T>(channel: string, data: T): void
   send<T>(channel: string, data: T, options: SendOptions<T>): void
   send<T = never>(channel: string, data?: T, options?: SendOptions<T>): void {
+    if (this.#disposed) {
+      throw new Error('IPC is disposed')
+    }
     const id = unique()
-    this.#sentIds.add(id)
+    this.#cleanStaleIds()
+    if (this.#sentIds.size >= this.#options.maxInflightIds) {
+      const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+      if (oldest) {
+        this.#sentIds.delete(oldest[0])
+      }
+    }
+    this.#sentIds.set(id, Date.now())
 
     const body: string = data !== undefined
       ? (options?.serializer
@@ -208,6 +219,16 @@ export class IPC {
     return off
   }
 
+  #cleanStaleIds(): void {
+    const now = Date.now()
+    for (const [id, timestamp] of this.#sentIds) {
+      if (now - timestamp > this.#options.chunkTimeout * 2) {
+        this.#sentIds.delete(id)
+        this.events.emit(EVENTS.ERROR, new Error(`Message ${id} timed out`))
+      }
+    }
+  }
+
   #channelUrl(channel: string, params: Record<string, string>): string {
     const url = new BedrockURL(`bedrock://${this.#options.namespace}${IPC_HOST_SUFFIX}/${channel}`)
     for (const [k, v] of Object.entries(params)) {
@@ -268,7 +289,7 @@ export class IPC {
     }
 
     const channel = url.pathname.slice(1)
-    if (!this.#onHandlers.has(channel)) {
+    if (!channel || !this.#onHandlers.has(channel)) {
       return
     }
 
@@ -276,22 +297,30 @@ export class IPC {
     const total = url.searchParams.get('total')
     const compressed = url.searchParams.get('c') === '1'
 
+    if (compressed && !this.#compressor) {
+      this.events.emit(EVENTS.ERROR, new Error('Received compressed packet but no compressor configured'))
+      return
+    }
+
     if (seq !== null && total !== null) {
       this.#handleChunk(id, channel, Number(seq), Number(total), payload, compressed)
     }
     else {
-      const raw = compressed && this.#compressor ? this.#compressor.decompress(payload) : payload
+      const raw = compressed ? this.#compressor!.decompress(payload) : payload
       this.#deliver(channel, raw)
     }
   }
 
   #handleChunk(id: string, channel: string, seq: number, total: number, payload: string, compressed: boolean): void {
+    if (compressed && !this.#compressor) {
+      this.events.emit(EVENTS.ERROR, new Error('Received compressed chunk but no compressor configured'))
+      return
+    }
+
     const result = this.#chunker.assemble(id, seq, total, payload, compressed, this.#options.chunkTimeout)
 
     if (result.done) {
-      const raw = result.compressed && this.#compressor
-        ? this.#compressor.decompress(result.data)
-        : result.data
+      const raw = result.compressed ? this.#compressor!.decompress(result.data) : result.data
       this.#deliver(channel, raw)
     }
   }

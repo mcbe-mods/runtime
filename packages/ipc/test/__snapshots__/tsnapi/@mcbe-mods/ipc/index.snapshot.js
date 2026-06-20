@@ -24,6 +24,7 @@ export class IPC {
   send(_, _, _) {}
   on(_, _, _) {}
   once(_, _, _) {}
+  cleanStaleIds() {}
   channelUrl(_, _) {}
   sendBody(_, _, _) {}
   handleReceive(_, _) {}

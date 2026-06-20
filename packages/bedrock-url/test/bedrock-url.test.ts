@@ -67,6 +67,20 @@ describe('BedrockURL', () => {
     expect(url.href).toBe('bedrock://calculator.rpc/add')
   })
 
+  it('resolves relative path when base has query with /', () => {
+    const url = new BedrockURL('add', 'bedrock://calculator.rpc/invoke?a=/b/c')
+    expect(url.host).toBe('calculator.rpc')
+    expect(url.pathname).toBe('/add')
+    expect(url.href).toBe('bedrock://calculator.rpc/add')
+  })
+
+  it('resolves relative path when base has hash with /', () => {
+    const url = new BedrockURL('add', 'bedrock://calculator.rpc/invoke#/section')
+    expect(url.host).toBe('calculator.rpc')
+    expect(url.pathname).toBe('/add')
+    expect(url.href).toBe('bedrock://calculator.rpc/add')
+  })
+
   it('throws on non-bedrock scheme', () => {
     expect(() => new BedrockURL('https://example.com')).toThrow('Invalid scheme')
     expect(() => new BedrockURL('http://example.com')).toThrow('Invalid scheme')
@@ -241,7 +255,21 @@ describe('URLSearchParams', () => {
 
   it('handles keys() and values()', () => {
     const p = new URLSearchParams('a=1&b=2')
-    expect(p.keys()).toEqual(['a', 'b'])
-    expect(p.values()).toEqual(['1', '2'])
+    expect([...p.keys()]).toEqual(['a', 'b'])
+    expect([...p.values()]).toEqual(['1', '2'])
+  })
+
+  it('entries() yields [key, value] pairs', () => {
+    const p = new URLSearchParams('a=1&b=2')
+    expect([...p.entries()]).toEqual([['a', '1'], ['b', '2']])
+  })
+
+  it('is iterable via Symbol.iterator', () => {
+    const p = new URLSearchParams('a=1&b=2')
+    const results: [string, string][] = []
+    for (const [k, v] of p) {
+      results.push([k, v])
+    }
+    expect(results).toEqual([['a', '1'], ['b', '2']])
   })
 })

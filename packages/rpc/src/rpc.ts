@@ -11,6 +11,7 @@ type DefaultedRPCOptions = Required<Omit<RPCOptions, 'cipher'>> & Pick<RPCOption
 const DEFAULT_OPTIONS: DefaultedRPCOptions = {
   namespace: 'global',
   timeout: 5000,
+  maxInflightIds: 1000,
 }
 
 const RPC_REQ_SUFFIX = '.req.rpc'
@@ -45,8 +46,8 @@ export class RPC {
   readonly #protocol: Protocol
   readonly #log: Log
   readonly #pending = new Map<string, PendingInvoke>()
-  readonly #handlers = new Map<string, (data: unknown) => unknown | Promise<unknown>>()
-  readonly #sentIds = new Set<string>()
+  readonly #handlers = new Map<string, (data: unknown) => unknown>()
+  readonly #sentIds = new Map<string, number>()
   #unsubscribe: () => void
   #disposed = false
 
@@ -89,6 +90,8 @@ export class RPC {
 
   #handleRequest(url: BedrockURL, body: string, id: string): void {
     // Loopback: this is our own request bouncing back
+    // NOTE: ID-only check means cross-namespace collision (same ID, different namespace) is possible
+    // but the namespace filter below catches that case
     if (this.#sentIds.has(id)) {
       this.#sentIds.delete(id)
       return
@@ -100,6 +103,7 @@ export class RPC {
       return
     }
 
+    // Strip '.req.rpc' suffix from hostname to recover the namespace
     const ns = url.hostname.slice(0, -RPC_REQ_SUFFIX.length)
     if (ns !== this.#options.namespace) {
       return
@@ -148,7 +152,7 @@ export class RPC {
       const parsed = JSON.parse(body)
       if (parsed && typeof parsed === 'object') {
         if ('error' in parsed) {
-          pending.reject(new Error(parsed.error as string))
+          pending.reject(new Error(typeof parsed.error === 'string' ? parsed.error : 'RPC: unknown error'))
         }
         else if ('data' in parsed) {
           pending.resolve(parsed.data)
@@ -182,31 +186,40 @@ export class RPC {
     if (this.#disposed) {
       throw new Error('RPC already disposed')
     }
+    if (typeof method !== 'string' || !method || method.includes('/') || method.includes('?')) {
+      throw new TypeError('Invalid method name')
+    }
     const id = unique()
-    this.#sentIds.add(id)
+    if (this.#sentIds.size >= this.#options.maxInflightIds) {
+      const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+      if (oldest) {
+        this.#sentIds.delete(oldest[0])
+      }
+    }
+    this.#sentIds.set(id, Date.now())
 
     const effectiveTimeout = timeout ?? this.#options.timeout
+    // null → JSON.stringify → 'null', undefined → ''
+    // On the remote side, empty body is parsed as undefined, 'null' as null
     const body = data !== undefined ? JSON.stringify(data) : ''
 
     const ns = this.#options.namespace
     const baseUrl = `bedrock://${ns}${RPC_REQ_SUFFIX}/${method}`
     const url = new BedrockURL(`${baseUrl}?v=${RPC_VERSION}&id=${id}`)
-    this.#protocol.post(url.href, body)
 
     return new Promise<T>((resolve, reject) => {
-      const timer = effectiveTimeout > 0
+      const entry: PendingInvoke = { resolve: resolve as (value: unknown) => void, reject, timer: undefined }
+      this.#pending.set(id, entry)
+
+      this.#protocol.post(url.href, body)
+
+      entry.timer = effectiveTimeout > 0
         ? system.runTimeout(() => {
             this.#pending.delete(id)
             this.#sentIds.delete(id)
             reject(new Error(`RPC timeout: ${method} (${effectiveTimeout}ms)`))
           }, ms2ticks(effectiveTimeout))
         : undefined
-
-      this.#pending.set(id, {
-        resolve: resolve as (value: unknown) => void,
-        reject,
-        timer,
-      })
     })
   }
 
@@ -218,22 +231,25 @@ export class RPC {
    * @param handler - Called with the deserialized payload data
    * @returns A function that unsubscribes this handler
    */
-  handle<T>(method: string, handler: (data: T) => unknown | Promise<unknown>): () => void {
+  handle<T>(method: string, handler: (data: T) => unknown): () => void {
     if (this.#disposed) {
       throw new Error('RPC already disposed')
+    }
+    if (typeof method !== 'string' || !method || method.includes('/') || method.includes('?')) {
+      throw new TypeError('Invalid method name')
     }
     if (this.#handlers.has(method)) {
       this.#log.warn(`RPC handler already registered for method: ${method}, replacing`)
     }
-    this.#handlers.set(method, handler as (data: unknown) => unknown | Promise<unknown>)
+    this.#handlers.set(method, handler as (data: unknown) => unknown)
     return () => {
       this.#handlers.delete(method)
     }
   }
 
-  once<T>(method: string, handler: (data: T) => unknown | Promise<unknown>): () => void {
+  once<T>(method: string, handler: (data: T) => unknown): () => void {
     let off: () => void
-    const wrapped = (data: T): unknown | Promise<unknown> => {
+    const wrapped = (data: T): unknown => {
       off()
       return handler(data)
     }

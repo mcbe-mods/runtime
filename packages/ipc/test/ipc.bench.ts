@@ -9,6 +9,9 @@ const SMALL = DIST.slice(0, 500)
 const MEDIUM = DIST.slice(0, 5_000)
 const LARGE = DIST
 
+// Sink to prevent DCE of computed values in benchmarks
+const _results: Array<{ raw: number, sent: number }> = []
+
 describe('IPC.send — fire-and-forget', () => {
   const ipc = new IPC({ namespace: 'bench' })
 
@@ -64,7 +67,7 @@ describe('compression ratio — payload size comparison', () => {
     ipc.send('e', SMALL)
     const raw = JSON.stringify(SMALL)
     const sent = vi.mocked(system.sendScriptEvent).mock.calls[0][1] as string
-    JSON.stringify({ raw: raw.length, sent: sent.length })
+    _results.push({ raw: raw.length, sent: sent.length })
   })
 
   bench('raw JSON vs compressed — medium (5 KB)', () => {
@@ -76,7 +79,7 @@ describe('compression ratio — payload size comparison', () => {
     for (const [, payload] of calls) {
       sentLen += (payload as string).length
     }
-    JSON.stringify({ raw: raw.length, sent: sentLen })
+    _results.push({ raw: raw.length, sent: sentLen })
   })
 
   bench('raw JSON vs compressed — large (26 KB)', () => {
@@ -88,6 +91,6 @@ describe('compression ratio — payload size comparison', () => {
     for (const [, payload] of calls) {
       sentLen += (payload as string).length
     }
-    JSON.stringify({ raw: raw.length, sent: sentLen })
+    _results.push({ raw: raw.length, sent: sentLen })
   })
 })

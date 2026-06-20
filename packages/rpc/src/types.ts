@@ -7,6 +7,11 @@ export interface RPCOptions {
   /** Default timeout in ms for invoke calls. @default 5000 */
   timeout?: number
   /**
+   * Maximum number of in-flight message IDs tracked for loopback detection.
+   * When exceeded, the oldest entry is evicted. @default 1000
+   */
+  maxInflightIds?: number
+  /**
    * Optional cipher for encrypting/decrypting protocol messages.
    * If provided, all RPC messages will be encrypted at the transport layer.
    * @see ProtocolCipher

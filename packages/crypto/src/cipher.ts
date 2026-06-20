@@ -1,26 +1,23 @@
 import type { TRet } from '@noble/ciphers/utils.js'
 import { Base64, utf8Decode, utf8Encode } from '@mcbe-mods/utils'
-import { xchacha20poly1305 } from '@noble/ciphers/chacha.js'
+import { rngChacha20, xchacha20poly1305 } from '@noble/ciphers/chacha.js'
 import { managedNonce } from '@noble/ciphers/utils.js'
 import { hkdf } from '@noble/hashes/hkdf.js'
 import { sha256 } from '@noble/hashes/sha2.js'
 
 const KEY_LENGTH = 32
 
-/**
- * Fallback random byte generator.
- *
- * QuickJS limitation: Minecraft Bedrock Script API does not expose
- * crypto.getRandomValues or any other CSPRNG. Math.random() (Mersenne Twister)
- * is used as fallback — NOT cryptographically secure. Users in environments
- * with CSPRNG access should inject it via CipherOptions.randomBytes.
- */
+let rng: ReturnType<typeof rngChacha20> | null = null
+
 function defaultRandomBytes(bytesLength: number): Uint8Array {
-  const out = new Uint8Array(bytesLength)
-  for (let i = 0; i < bytesLength; i++) {
-    out[i] = (Math.random() * 256) | 0
+  if (!rng) {
+    const seed = new Uint8Array(32)
+    for (let i = 0; i < 32; i++) {
+      seed[i] = (Math.random() * 256) | 0
+    }
+    rng = rngChacha20(seed)
   }
-  return out
+  return rng.randomBytes(bytesLength)
 }
 
 export interface CipherOptions {
@@ -54,7 +51,7 @@ export class Cipher {
     const saltBytes = salt !== undefined
       ? (typeof salt === 'string' ? utf8Encode(salt) : salt)
       : utf8Encode('github.com/mcbe-mods/runtime')
-    const key = hkdf(sha256, ikm, saltBytes, undefined, KEY_LENGTH)
+    const key = hkdf(sha256, ikm, saltBytes, utf8Encode('mcbe-mods-crypto-v1'), KEY_LENGTH)
     return new Cipher(key, options)
   }
 

@@ -11,6 +11,12 @@
  * ```
  */
 export function splitGroups(sum: number, groupSize: number = 64): number[] {
+  if (groupSize <= 0) {
+    throw new RangeError('groupSize must be a positive number')
+  }
+  if (sum < 0) {
+    throw new RangeError('sum must be a non-negative number')
+  }
   const groups = []
   while (sum > 0) {
     const group = Math.min(sum, groupSize)

@@ -35,4 +35,8 @@ vi.mock('@minecraft/server', () => ({
   },
 }))
 
+export function clearListeners(): void {
+  scriptEventListeners.clear()
+}
+
 export { mockSend, scriptEventListeners }

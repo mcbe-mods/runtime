@@ -33,11 +33,15 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "scripts": {
     "build": "tsdown -F .",
     "dev": "tsdown -F . --watch",
     "prepublishOnly": "pnpm build",
-    "test": "pnpm run build && vitest"
+    "test": "vitest"
   },
   "peerDependencies": {
     "@minecraft/server": ">=1.18.0"

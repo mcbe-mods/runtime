@@ -11,5 +11,8 @@
  * ```
  */
 export function ms2ticks(milliseconds: number = 1000, gameTicksPerSecond: number = 20, millisecondsPerSecond: number = 1000): number {
-  return Math.floor(milliseconds * gameTicksPerSecond / millisecondsPerSecond)
+  if (milliseconds < 0 || gameTicksPerSecond <= 0 || millisecondsPerSecond <= 0) {
+    throw new RangeError('milliseconds must be non-negative, gameTicksPerSecond and millisecondsPerSecond must be positive')
+  }
+  return Math.ceil(milliseconds * gameTicksPerSecond / millisecondsPerSecond)
 }

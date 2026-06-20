@@ -107,9 +107,9 @@ describe('Protocol', () => {
     it('propagates sourceType from event', () => {
       const handler = vi.fn()
       protocol.on(handler)
-      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.EntityEvent)
       expect(handler).toHaveBeenCalledTimes(1)
-      expect(handler.mock.calls[0][0].sourceType).toBe(ScriptEventSource.Entity)
+      expect(handler.mock.calls[0][0].sourceType).toBe(ScriptEventSource.EntityEvent)
     })
 
     it('ignores events with non-bedrock scheme', () => {
@@ -156,17 +156,18 @@ describe('Protocol', () => {
       it('filters out events with non-matching sourceType', () => {
         const handler = vi.fn()
         protocol.on(handler, { sourceType: 'Server' })
-        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.EntityEvent)
         expect(handler).not.toHaveBeenCalled()
       })
 
       it('filter by Entity sourceType', () => {
         const handler = vi.fn()
-        protocol.on(handler, { sourceType: 'Entity' })
-        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+        protocol.on(handler, { sourceType: 'EntityEvent' })
+        mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.EntityEvent)
         expect(handler).toHaveBeenCalledTimes(1)
         mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Server)
-        expect(handler).toHaveBeenCalledTimes(1) // Server doesn't match Entity
+        // second event filtered out — sourceType Server !== EntityEvent
+        expect(handler).toHaveBeenCalledTimes(1)
       })
     })
   })
@@ -198,7 +199,7 @@ describe('Protocol', () => {
     it('filters out events with non-matching sourceType', () => {
       const handler = vi.fn()
       protocol.once(handler, { sourceType: 'Server' })
-      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.Entity)
+      mockScriptEvent.simulateReceive('bedrock://host/path', 'msg', ScriptEventSource.EntityEvent)
       expect(handler).not.toHaveBeenCalled()
     })
 

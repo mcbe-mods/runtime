@@ -8,6 +8,7 @@
  * @param size - Length of the random string (default 10)
  */
 export function unique(size: number = 10): string {
+  size = Math.max(0, size)
   const r = (): string => Math.random().toString(36).slice(2)
   let result = r()
   while (result.length < size) {

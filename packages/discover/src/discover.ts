@@ -10,8 +10,8 @@ const DISCOVER_VERSION = '1'
 const DEFAULT_HEARTBEAT_INTERVAL = 5000
 const DEFAULT_TTL = 15000
 
-function normalizeServiceType(hostname: string): string {
-  return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
+export function normalizeServiceType(hostname: string): string {
+  return hostname.replace(/\.discover$/, '').replace(/^\d+\./, '')
 }
 
 export class Discover {
@@ -24,7 +24,7 @@ export class Discover {
   #remoteCache = new Map<string, RemoteEntry>()
   #queries = new Map<number, QueryEntry>()
   #queryIdCounter = 0
-  #sentIds = new Set<string>()
+  #sentIds = new Map<string, number>()
   #ttlTimer: number | undefined
 
   /**
@@ -35,6 +35,10 @@ export class Discover {
     this.#options = {
       heartbeatInterval: options.heartbeatInterval ?? DEFAULT_HEARTBEAT_INTERVAL,
       ttl: options.ttl ?? DEFAULT_TTL,
+      maxInflightIds: options.maxInflightIds ?? 1000,
+    }
+    if (this.#options.ttl < this.#options.heartbeatInterval) {
+      throw new RangeError('ttl must be >= heartbeatInterval')
     }
     this.#protocol = new Protocol()
     this.#log = new Log('Discover')
@@ -86,18 +90,31 @@ export class Discover {
    * @returns An unsubscribe function to deregister the service
    */
   register<M = Record<string, any>>(type: string, meta?: M): () => void {
+    if (typeof type !== 'string' || !type || type.startsWith('.') || type.endsWith('.') || type.length > 255) {
+      throw new TypeError('Invalid serviceType')
+    }
     const n = this.#nextInstanceIds.get(type) ?? 1
     this.#nextInstanceIds.set(type, n + 1)
 
-    const hostname = n === 1
-      ? `${type}.discover`
-      : `${type.replace(/^([^.]+)/, `$1-${n}`)}.discover`
+    const hostname = `${n}.${type}.discover`
 
     const body = meta !== undefined ? JSON.stringify({ meta }) : '{}'
 
     const post = (): void => {
       const nonce = unique()
-      this.#sentIds.add(nonce)
+      const now = Date.now()
+      for (const [id, ts] of this.#sentIds) {
+        if (now - ts > this.#options.ttl) {
+          this.#sentIds.delete(id)
+        }
+      }
+      if (this.#sentIds.size >= this.#options.maxInflightIds) {
+        const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
+        if (oldest) {
+          this.#sentIds.delete(oldest[0])
+        }
+      }
+      this.#sentIds.set(nonce, now)
       const url = new BedrockURL(`bedrock://${hostname}/`)
       url.searchParams.set('v', DISCOVER_VERSION)
       url.searchParams.set('i', nonce)
@@ -125,6 +142,9 @@ export class Discover {
    * @returns An unsubscribe function to stop listening
    */
   query<M = Record<string, any>>(type: string, callback: (event: ServiceEvent<M>) => void): () => void {
+    if (typeof type !== 'string' || !type || type.startsWith('.') || type.endsWith('.') || type.length > 255) {
+      throw new TypeError('Invalid serviceType')
+    }
     const id = ++this.#queryIdCounter
     this.#queries.set(id, { type, callback })
 
@@ -146,6 +166,9 @@ export class Discover {
     for (const reg of this.#localServices.values()) {
       system.clearRun(reg.timer)
     }
+    for (const [, entry] of this.#remoteCache) {
+      this.#notifyQueries(entry.serviceType, { type: 'service-removed', serviceType: entry.serviceType })
+    }
     this.#protocol.dispose()
     this.#localServices.clear()
     this.#remoteCache.clear()
@@ -158,7 +181,7 @@ export class Discover {
     this.#ttlTimer = system.runInterval(() => {
       const now = Date.now()
       for (const [hostname, entry] of this.#remoteCache) {
-        if (now - entry.lastSeen > this.#options.ttl) {
+        if (now - entry.lastSeen >= this.#options.ttl) {
           this.#remoteCache.delete(hostname)
           this.#notifyQueries(entry.serviceType, { type: 'service-removed', serviceType: entry.serviceType })
         }
@@ -173,7 +196,7 @@ export class Discover {
           query.callback(event)
         }
         catch (e) {
-          this.#log.warn(`Query callback error: ${e}`)
+          this.#log.warn('Query callback error:', e)
         }
       }
     }

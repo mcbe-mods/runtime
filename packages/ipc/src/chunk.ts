@@ -23,6 +23,9 @@ export class Chunker {
    * @param chunkSize - Maximum characters per chunk
    */
   constructor(chunkSize: number) {
+    if (chunkSize <= 0) {
+      throw new RangeError('chunkSize must be positive')
+    }
     this.#chunkSize = chunkSize
   }
 

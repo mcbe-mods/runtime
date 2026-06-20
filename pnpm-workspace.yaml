@@ -1,4 +1,5 @@
 catalogMode: prefer
+# pnpm warns when root package.json is private; this monorepo uses root for tooling only
 ignoreWorkspaceRootCheck: true
 shellEmulator: true
 trustPolicy: no-downgrade

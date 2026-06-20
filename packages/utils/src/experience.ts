@@ -49,6 +49,9 @@ export class Experience {
    * @returns {this} self
    */
   addXP(points: number): this {
+    if (points < 0) {
+      return this
+    }
     this.#xp += points
     while (this.#xp >= this.#nextLevelRequiredXP) {
       this.#level++

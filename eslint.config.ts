@@ -13,7 +13,7 @@ export default antfu(
   {
     files: ['packages/log/src/**/*.ts'],
     rules: {
-      'no-console': ['error', { allow: ['log', 'info', 'warn', 'error'] }],
+      'no-console': ['error', { allow: ['log', 'info', 'warn', 'error', 'debug'] }],
     },
   },
 )

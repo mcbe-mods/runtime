@@ -32,7 +32,7 @@ log.error('Something broke', error)
 log.fatal('Cannot recover')
 
 // Child logger (inherits parent options, can override)
-const child = new Log('MyAddon:Sub', { level: 'warn' })
+const child = log.child('Sub', { level: 'warn' })
 child.info('scoped message') // skipped if parent set debug but child overrode to warn
 
 // Timestamps

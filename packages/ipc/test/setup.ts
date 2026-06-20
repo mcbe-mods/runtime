@@ -22,6 +22,10 @@ vi.mock('@minecraft/server', () => ({
   },
 }))
 
+export function clearListeners(): void {
+  scriptEventListeners.clear()
+}
+
 export function simulateReceive(urlStr: string, message: string, sourceType = 'Server'): void {
   for (const cb of scriptEventListeners) {
     cb({ id: urlStr, message, sourceType })

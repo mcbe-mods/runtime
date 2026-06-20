@@ -46,10 +46,6 @@ off()
 ipc.events.on(EVENTS.ERROR, (err) => {
   console.error('IPC error:', err.message)
 })
-
-ipc.events.on(EVENTS.INVALID_PACKET, ({ payload }) => {
-  console.warn('Invalid payload:', payload)
-})
 ```
 
 ### Lifecycle

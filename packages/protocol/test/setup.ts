@@ -1,10 +1,13 @@
 import { vi } from 'vitest'
 
 export const ScriptEventSource = {
+  NPCDialogue: 'NPCDialogue',
+  Chat: 'Chat',
+  EntityEvent: 'EntityEvent',
   Server: 'Server',
-  Entity: 'Entity',
-  Block: 'Block',
-  Command: 'Command',
+  BlockCommandBlock: 'BlockCommandBlock',
+  MinecartCommandBlock: 'MinecartCommandBlock',
+  CommandBlock: 'CommandBlock',
 } as const
 
 interface MockEvent { id: string, message: string, sourceType: string }

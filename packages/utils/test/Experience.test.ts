@@ -91,4 +91,12 @@ describe('experience', () => {
     exp.setXP(5)
     expect(exp.getTotalXP()).toBe(12)
   })
+
+  it('addXP with negative value returns without changes', () => {
+    const exp = new Experience()
+    exp.addXP(0)
+    expect(exp.getXP()).toBe(0)
+    exp.addXP(-5)
+    expect(exp.getXP()).toBe(0)
+  })
 })

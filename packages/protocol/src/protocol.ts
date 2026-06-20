@@ -12,6 +12,10 @@ export interface ProtocolOptions {
   cipher?: ProtocolCipher
 }
 
+/**
+ * Event received via bedrock:// protocol.
+ * The `url` contains the full parsed URL — use `url.searchParams` to access query parameters.
+ */
 export interface BedrockReceiveEvent {
   url: BedrockURL
   message: string
@@ -54,7 +58,7 @@ export class Protocol {
   on(handler: (event: BedrockReceiveEvent) => void, options: { sourceType?: ScriptEventSource }): () => void
   on(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
     const wrapped = (event: BedrockReceiveEvent): void => {
-      if (options?.sourceType && event.sourceType !== options.sourceType) {
+      if (options?.sourceType !== undefined && event.sourceType !== options.sourceType) {
         return
       }
       handler(event)
@@ -63,7 +67,7 @@ export class Protocol {
     this.#subscriptions.add(wrapped)
 
     if (!this.#listener) {
-      this.#listener = (event) => {
+      const listener = (event: ScriptEventCommandMessageAfterEvent): void => {
         let url: BedrockURL
         try {
           url = new BedrockURL(event.id)
@@ -91,13 +95,14 @@ export class Protocol {
           }
         }
       }
-      system.afterEvents.scriptEventReceive.subscribe(this.#listener!)
+      this.#listener = listener
+      system.afterEvents.scriptEventReceive.subscribe(listener)
     }
 
     return () => {
       this.#subscriptions.delete(wrapped)
       if (this.#subscriptions.size === 0 && this.#listener) {
-        system.afterEvents.scriptEventReceive.unsubscribe(this.#listener!)
+        system.afterEvents.scriptEventReceive.unsubscribe(this.#listener)
         this.#listener = null
       }
     }
@@ -108,11 +113,16 @@ export class Protocol {
   once(handler: (event: BedrockReceiveEvent) => void, options?: { sourceType?: ScriptEventSource }): () => void {
     let off: () => void
     const wrapped = (event: BedrockReceiveEvent): void => {
-      if (options?.sourceType && event.sourceType !== options.sourceType) {
+      if (options?.sourceType !== undefined && event.sourceType !== options.sourceType) {
         return
       }
       off()
-      handler(event)
+      try {
+        handler(event)
+      }
+      catch (e) {
+        this.#log.warn('once handler error:', e)
+      }
     }
     off = this.on(wrapped)
     return off

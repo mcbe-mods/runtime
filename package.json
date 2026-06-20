@@ -13,6 +13,10 @@
     "url": "git+https://github.com/mcbe-mods/runtime.git"
   },
   "bugs": "https://github.com/mcbe-mods/runtime/issues",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "scripts": {
     "lint": "eslint",
     "build": "tsdown",

@@ -6,7 +6,7 @@
     "access": "public"
   },
   "packageManager": "pnpm@10.33.1",
-  "description": "Deflate compression for MCBE Script API — fflate-based Compressor with threshold",
+  "description": "Deflate compression for MCBE Script API — fflate-based Compressor",
   "author": "Lete114",
   "license": "MIT",
   "homepage": "https://github.com/mcbe-mods/runtime#readme",
@@ -33,11 +33,15 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "scripts": {
     "build": "tsdown -F .",
     "dev": "tsdown -F . --watch",
     "prepublishOnly": "pnpm build",
-    "test": "pnpm run build && vitest"
+    "test": "vitest"
   },
   "dependencies": {
     "@mcbe-mods/utils": "workspace:^",
