@@ -51,7 +51,7 @@ export class Cipher {
     const saltBytes = salt !== undefined
       ? (typeof salt === 'string' ? utf8Encode(salt) : salt)
       : utf8Encode('github.com/mcbe-mods/runtime')
-    const key = hkdf(sha256, ikm, saltBytes, undefined, KEY_LENGTH)
+    const key = hkdf(sha256, ikm, saltBytes, utf8Encode('mcbe-mods-crypto-v1'), KEY_LENGTH)
     return new Cipher(key, options)
   }
 
