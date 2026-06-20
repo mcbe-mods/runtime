@@ -7,38 +7,18 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 const KEY_LENGTH = 32
 
-/**
- * Cryptographically secure pseudorandom byte generator.
- *
- * Uses ChaCha20-based CSPRNG from @noble/ciphers (rngChacha20), seeded once
- * at module load time from Math.random(). While the seed itself is not
- * cryptographically secure (QuickJS limitation), all subsequent output bytes
- * are produced by the ChaCha20 CSPRNG - providing better statistical and
- * security properties than raw Math.random().
- *
- * Falls back to Math.random() if rngChacha20 is unavailable in the runtime.
- * Users in environments with CSPRNG access (e.g. Node.js) can inject it via
- * CipherOptions.randomBytes.
- */
-const defaultRandomBytes: (bytesLength: number) => Uint8Array = (() => {
-  try {
+let rng: ReturnType<typeof rngChacha20> | null = null
+
+function defaultRandomBytes(bytesLength: number): Uint8Array {
+  if (!rng) {
     const seed = new Uint8Array(32)
     for (let i = 0; i < 32; i++) {
       seed[i] = (Math.random() * 256) | 0
     }
-    const prg = rngChacha20(seed)
-    return (bytesLength: number) => prg.randomBytes(bytesLength)
+    rng = rngChacha20(seed)
   }
-  catch {
-    return (bytesLength: number) => {
-      const out = new Uint8Array(bytesLength)
-      for (let i = 0; i < bytesLength; i++) {
-        out[i] = (Math.random() * 256) | 0
-      }
-      return out
-    }
-  }
-})()
+  return rng.randomBytes(bytesLength)
+}
 
 export interface CipherOptions {
   randomBytes?: (size: number) => Uint8Array
