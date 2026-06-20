@@ -1,6 +1,7 @@
 import type { ServiceEvent } from '../src/types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Discover, normalizeServiceType } from '../src/discover'
+import { clearListeners } from './setup'
 
 describe('normalizeServiceType', () => {
   it('removes instance number prefix', () => {
@@ -23,6 +24,7 @@ describe('Discover', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    clearListeners()
   })
 
   it('registers and sends heartbeat', () => {

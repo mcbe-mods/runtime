@@ -3,7 +3,7 @@ import { system } from '@minecraft/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EVENTS } from '../src/events'
 import { IPC } from '../src/ipc'
-import { simulateReceive } from './setup'
+import { clearListeners, simulateReceive } from './setup'
 
 function url(channel: string, extra = ''): string {
   return `bedrock://test.ipc/${channel}?v=1&id=ID${extra}`
@@ -25,6 +25,7 @@ describe('IPC', () => {
   afterEach(() => {
     vi.useRealTimers()
     ipc?.dispose()
+    clearListeners()
   })
 
   it('sends a direct (unchunked) packet', () => {
@@ -180,6 +181,7 @@ describe('IPC', () => {
     simulateReceive(urlNs('ns2', 'ping'), JSON.stringify({ msg: 'hello' }))
     expect(handler).toHaveBeenCalledTimes(1)
     expect(handler).toHaveBeenCalledWith({ msg: 'hello' })
+    ipc2.dispose()
   })
 
   it('ignores self-sent packet on loopback', () => {
@@ -286,6 +288,7 @@ describe('IPC', () => {
     simulateReceive('bedrock://test.ipc/big?v=1&id=TIMEOUT&seq=1&total=2', 'part2')
 
     expect(handler).not.toHaveBeenCalled()
+    chunkIPC.dispose()
   })
 
   it('compresses data when compressor is configured', () => {
@@ -296,6 +299,7 @@ describe('IPC', () => {
     const [url, payload] = (system.sendScriptEvent as any).mock.calls[0]
     expect(url).toMatch(/[?&]c=1(?:&|$)/)
     expect(payload).not.toBe(JSON.stringify(data))
+    compIPC.dispose()
   })
 
   it('decompresses data on receive when c=1 flag is present', () => {
@@ -310,6 +314,7 @@ describe('IPC', () => {
     simulateReceive(`bedrock://test.ipc/comp?v=1&id=CID&c=1`, compressed)
 
     expect(handler).toHaveBeenCalledWith(data)
+    compIPC.dispose()
   })
 
   it('emits error when c=1 received but no compressor configured', () => {
@@ -345,6 +350,7 @@ describe('IPC', () => {
 
       const payload = (system.sendScriptEvent as any).mock.calls[0][1]
       expect(payload).toBe(`enc(${JSON.stringify({ msg: 'hello' })})`)
+      encIPC.dispose()
     })
 
     it('decrypts incoming payloads via on()', () => {
@@ -357,6 +363,7 @@ describe('IPC', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
       expect(handler).toHaveBeenCalledWith({ msg: 'hello' })
+      encIPC.dispose()
     })
   })
 })
