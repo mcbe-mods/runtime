@@ -196,13 +196,15 @@ export class IPC {
     }
   }
 
-  once<T>(channel: string, handler: (data: T) => void): () => void {
+  once<T>(channel: string, handler: (data: T) => void): () => void
+  once<T>(channel: string, handler: (data: T) => void, options: OnOptions<T>): () => void
+  once<T>(channel: string, handler: (data: T) => void, options?: OnOptions<T>): () => void {
     let off: () => void
     const wrapped = (data: T): void => {
       off()
       handler(data)
     }
-    off = this.on(channel, wrapped)
+    off = options ? this.on(channel, wrapped, options) : this.on(channel, wrapped)
     return off
   }
 

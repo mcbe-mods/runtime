@@ -61,6 +61,7 @@ export declare class IPC {
   on<T>(_: string, _: (_: T) => void): () => void;
   on<T>(_: string, _: (_: T) => void, _: OnOptions<T>): () => void;
   once<T>(_: string, _: (_: T) => void): () => void;
+  once<T>(_: string, _: (_: T) => void, _: OnOptions<T>): () => void;
 }
 // #endregion
 
