@@ -3,16 +3,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Discover, normalizeServiceType } from '../src/discover'
 
 describe('normalizeServiceType', () => {
-  it('removes numbered suffix from first segment', () => {
-    expect(normalizeServiceType('_rcon-1._tcp.discover')).toBe('_rcon._tcp')
+  it('removes instance number prefix', () => {
+    expect(normalizeServiceType('1._rcon._tcp.discover')).toBe('_rcon._tcp')
   })
 
   it('handles hostname without number', () => {
     expect(normalizeServiceType('_rcon._tcp.discover')).toBe('_rcon._tcp')
   })
 
-  it('removes number from simple hostname', () => {
-    expect(normalizeServiceType('_svc-2.discover')).toBe('_svc')
+  it('handles multi-digit instance numbers', () => {
+    expect(normalizeServiceType('42._svc.discover')).toBe('_svc')
   })
 })
 

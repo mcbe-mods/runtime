@@ -12,7 +12,7 @@ const DEFAULT_TTL = 15000
 const MAX_INFLIGHT_IDS = 1000
 
 export function normalizeServiceType(hostname: string): string {
-  return hostname.replace(/^([^.]+?)-\d+(\.)/, '$1$2').replace(/\.discover$/, '')
+  return hostname.replace(/\.discover$/, '').replace(/^\d+\./, '')
 }
 
 export class Discover {
@@ -58,7 +58,7 @@ export class Discover {
       }
 
       const hostname = event.url.hostname
-      const serviceType = event.url.searchParams.get('t') ?? normalizeServiceType(hostname)
+      const serviceType = normalizeServiceType(hostname)
 
       let meta: unknown
       try {
@@ -96,9 +96,7 @@ export class Discover {
     const n = this.#nextInstanceIds.get(type) ?? 1
     this.#nextInstanceIds.set(type, n + 1)
 
-    const hostname = n === 1
-      ? `${type}.discover`
-      : `${type.replace(/^([^.]+)/, `$1-${n}`)}.discover`
+    const hostname = `${n}.${type}.discover`
 
     const body = meta !== undefined ? JSON.stringify({ meta }) : '{}'
 
@@ -120,7 +118,6 @@ export class Discover {
       const url = new BedrockURL(`bedrock://${hostname}/`)
       url.searchParams.set('v', DISCOVER_VERSION)
       url.searchParams.set('i', nonce)
-      url.searchParams.set('t', type)
       this.#protocol.post(url, body)
     }
 
