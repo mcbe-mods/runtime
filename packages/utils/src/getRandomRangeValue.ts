@@ -1,5 +1,8 @@
 /**
  * Random Range Value
+ *
+ * Note: Uses Math.random() rather than crypto.getRandomValues because
+ * QuickJS in Minecraft Bedrock Script API does not expose a Web Crypto API.
  * @param {number} min A random minimum
  * @param {number} max A random maximum
  * @returns {number} A random integer between min and max

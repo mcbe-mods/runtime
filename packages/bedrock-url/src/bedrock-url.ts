@@ -3,6 +3,13 @@ import { URLSearchParams } from './url-search-params'
 const SCHEME = 'bedrock'
 const SCHEME_PREFIX = 'bedrock://'
 
+/**
+ * Minimal URL implementation for the bedrock:// scheme.
+ *
+ * QuickJS polyfill: Minecraft Bedrock Script API does not provide the
+ * standard URL class. This implementation supports the bedrock:// scheme
+ * used for addon-to-addon communication via script events.
+ */
 export class BedrockURL {
   #host = ''
   #hostname = ''

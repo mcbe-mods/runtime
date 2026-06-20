@@ -1,3 +1,10 @@
+/**
+ * Minimal URLSearchParams implementation.
+ *
+ * QuickJS polyfill: Minecraft Bedrock Script API does not provide the
+ * standard URLSearchParams class. This implements the subset needed for
+ * the bedrock:// URL scheme used in addon-to-addon communication.
+ */
 export class URLSearchParams {
   readonly #entries: [string, string][] = []
 
