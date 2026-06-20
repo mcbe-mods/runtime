@@ -9,6 +9,11 @@ interface PendingPacket {
 /**
  * Splits large serialized payloads into smaller chunks and reassembles them on the receiving end.
  * Used internally by {@link IPC} — you typically don't need to interact with this class directly.
+ *
+ * Note on sizing: String.slice() operates on UTF-16 code units, not bytes.
+ * TextEncoder is unavailable in Minecraft Bedrock Script API (QuickJS),
+ * so chunkSize is expressed in characters (UTF-16 code units). Consumers
+ * handling non-ASCII content should pre-encode to a byte-safe format.
  */
 export class Chunker {
   readonly #chunkSize: number

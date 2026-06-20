@@ -7,6 +7,14 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 const KEY_LENGTH = 32
 
+/**
+ * Fallback random byte generator.
+ *
+ * QuickJS limitation: Minecraft Bedrock Script API does not expose
+ * crypto.getRandomValues or any other CSPRNG. Math.random() (Mersenne Twister)
+ * is used as fallback — NOT cryptographically secure. Users in environments
+ * with CSPRNG access should inject it via CipherOptions.randomBytes.
+ */
 function defaultRandomBytes(bytesLength: number): Uint8Array {
   const out = new Uint8Array(bytesLength)
   for (let i = 0; i < bytesLength; i++) {
@@ -31,6 +39,16 @@ export class Cipher {
     return defaultRandomBytes(length)
   }
 
+  /**
+   * Create a Cipher from a password using HKDF-SHA256 key derivation.
+   *
+   * QuickJS limitation: PBKDF2/scrypt are preferred for password-based KDFs
+   * but their iteration count causes script timeouts in Minecraft Bedrock
+   * Script API. HKDF is used as a lightweight alternative — suitable here
+   * because communication is confined to the local game instance (no remote
+   * brute-force exposure). The salt parameter is REQUIRED for security;
+   * when omitted, a fixed default salt is used (NOT recommended).
+   */
   static fromPassword(password: string, salt?: string | Uint8Array, options?: CipherOptions): Cipher {
     const ikm = utf8Encode(password)
     const saltBytes = salt !== undefined

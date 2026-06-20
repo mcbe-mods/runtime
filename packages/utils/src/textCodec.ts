@@ -1,3 +1,7 @@
+/**
+ * QuickJS polyfill: TextEncoder is unavailable in Minecraft Bedrock Script API,
+ * so we use encodeURIComponent to build UTF-8 byte arrays.
+ */
 export function utf8Encode(s: string): Uint8Array {
   const encoded = encodeURIComponent(s)
   const bytes: number[] = []
@@ -13,6 +17,11 @@ export function utf8Encode(s: string): Uint8Array {
   return new Uint8Array(bytes)
 }
 
+/**
+ * QuickJS polyfill: TextDecoder is unavailable, so we use decodeURIComponent
+ * to decode UTF-8 byte arrays back to strings.
+ * @throws {URIError} If the byte sequence is not valid UTF-8
+ */
 export function utf8Decode(bytes: Uint8Array): string {
   let s = ''
   for (const b of bytes) {

@@ -1,5 +1,11 @@
 import { utf8Decode, utf8Encode } from './textCodec'
 
+/**
+ * Base64 encoding/decoding.
+ *
+ * QuickJS polyfill: atob/btoa are unavailable in Minecraft Bedrock Script API,
+ * so we implement the RFC 4648 algorithm directly.
+ */
 export class Base64 {
   static #CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
