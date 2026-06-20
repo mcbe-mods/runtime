@@ -92,6 +92,24 @@ describe('IPC', () => {
       simulateReceive(url('test'), '42')
       expect(handler).not.toHaveBeenCalled()
     })
+
+    it('supports custom deserializer', () => {
+      const handler = vi.fn()
+      const deserializer = {
+        deserialize: (d: string) => Number.parseInt(d.replace('num:', ''), 10),
+      }
+      ipc.once('custom', handler, { deserializer })
+      simulateReceive(url('custom'), 'num:42')
+      expect(handler).toHaveBeenCalledWith(42)
+    })
+
+    it('with custom deserializer fires only once', () => {
+      const handler = vi.fn()
+      ipc.once('test', handler, { deserializer: { deserialize: (d: string) => d } })
+      simulateReceive(url('test'), 'a')
+      simulateReceive(url('test'), 'b')
+      expect(handler).toHaveBeenCalledTimes(1)
+    })
   })
 
   it('chunks large payloads', () => {

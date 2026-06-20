@@ -16,14 +16,14 @@ npm install @mcbe-mods/utils
 ```
 
 ```ts
-import { Base64, color, Experience, getCubeRange, getRandomProbability, getRandomRangeValue, getSphereRange, ms2ticks, splitGroups, unique } from '@mcbe-mods/utils'
+import { Base64, Color, Experience, getCubeRange, getRandomProbability, getRandomRangeValue, getSphereRange, ms2ticks, splitGroups, unique } from '@mcbe-mods/utils'
 
 // splitGroups - split items into stacks
 splitGroups(65) // => [64, 1]
 splitGroups(140) // => [64, 64, 12]
 
-// color - Minecraft formatting codes
-color.green.italic.bold('Dedicated Ser') + color.reset('ver') + color.red.obfuscated('!!!')
+// Color - Minecraft formatting codes
+Color.green.italic.bold('Dedicated Ser') + Color.reset('ver') + Color.red.obfuscated('!!!')
 // => '§a§o§lDedicated Ser§rver§c§k!!!'
 
 // Experience - player XP calculation
@@ -44,7 +44,7 @@ getSphereRange({ x: 0, y: 0, z: 0 }, 1) // => 27 positions (sphere)
 | Function | Description |
 | --- | --- |
 | `splitGroups(sum, groupSize?)` | Split a number into groups of a given size |
-| `color` | Minecraft color/formatting code stylizer |
+| `Color` | Minecraft color/formatting code stylizer |
 | `Experience` | Player experience calculator (leveling up) |
 | `ms2ticks(ms?, ticksPerSec?, msPerSec?)` | Convert real time to game ticks |
 | `getCubeRange(location, radius?)` | Get block positions in a cube |
