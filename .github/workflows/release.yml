@@ -40,7 +40,6 @@ jobs:
       # =========================
       - name: Build
         run: pnpm build
-        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
 
       # =========================
       # 3. GitHub changelog（可选）

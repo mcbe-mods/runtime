@@ -182,6 +182,9 @@ export class RPC {
     if (this.#disposed) {
       throw new Error('RPC already disposed')
     }
+    if (typeof method !== 'string' || !method || method.includes('/') || method.includes('?')) {
+      throw new TypeError('Invalid method name')
+    }
     const id = unique()
     this.#sentIds.add(id)
 
@@ -191,22 +194,20 @@ export class RPC {
     const ns = this.#options.namespace
     const baseUrl = `bedrock://${ns}${RPC_REQ_SUFFIX}/${method}`
     const url = new BedrockURL(`${baseUrl}?v=${RPC_VERSION}&id=${id}`)
-    this.#protocol.post(url.href, body)
 
     return new Promise<T>((resolve, reject) => {
-      const timer = effectiveTimeout > 0
+      const entry: PendingInvoke = { resolve: resolve as (value: unknown) => void, reject, timer: undefined }
+      this.#pending.set(id, entry)
+
+      this.#protocol.post(url.href, body)
+
+      entry.timer = effectiveTimeout > 0
         ? system.runTimeout(() => {
             this.#pending.delete(id)
             this.#sentIds.delete(id)
             reject(new Error(`RPC timeout: ${method} (${effectiveTimeout}ms)`))
           }, ms2ticks(effectiveTimeout))
         : undefined
-
-      this.#pending.set(id, {
-        resolve: resolve as (value: unknown) => void,
-        reject,
-        timer,
-      })
     })
   }
 
@@ -221,6 +222,9 @@ export class RPC {
   handle<T>(method: string, handler: (data: T) => unknown | Promise<unknown>): () => void {
     if (this.#disposed) {
       throw new Error('RPC already disposed')
+    }
+    if (typeof method !== 'string' || !method || method.includes('/') || method.includes('?')) {
+      throw new TypeError('Invalid method name')
     }
     if (this.#handlers.has(method)) {
       this.#log.warn(`RPC handler already registered for method: ${method}, replacing`)
