@@ -19,6 +19,7 @@ export interface IPCOptions {
   compress?: DataCompressor;
   maxPacketSize?: number;
   chunkTimeout?: number;
+  maxInflightIds?: number;
   cipher?: ProtocolCipher$1;
 }
 export interface OnOptions<T = never> {
