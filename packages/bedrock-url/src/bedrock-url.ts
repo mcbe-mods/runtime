@@ -34,7 +34,9 @@ export class BedrockURL {
         this.#parse(SCHEME_PREFIX + baseHost + url)
       }
       else {
-        const basePath = baseBody.includes('/') ? baseBody.slice(baseBody.indexOf('/')) : '/'
+        const baseBodyClean = baseBody.includes('?') ? baseBody.slice(0, baseBody.indexOf('?')) : baseBody
+        const baseBodyCleaner = baseBodyClean.includes('#') ? baseBodyClean.slice(0, baseBodyClean.indexOf('#')) : baseBodyClean
+        const basePath = baseBodyCleaner.includes('/') ? baseBodyCleaner.slice(baseBodyCleaner.indexOf('/')) : '/'
         const baseDir = basePath.endsWith('/') ? basePath : basePath.slice(0, basePath.lastIndexOf('/') + 1)
         this.#parse(SCHEME_PREFIX + baseHost + baseDir + url)
       }

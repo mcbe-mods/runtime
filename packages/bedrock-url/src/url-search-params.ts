@@ -89,12 +89,26 @@ export class URLSearchParams {
     }
   }
 
-  keys(): string[] {
-    return this.#entries.map(([k]) => k)
+  * entries(): IterableIterator<[string, string]> {
+    for (const entry of this.#entries) {
+      yield [entry[0], entry[1]] as [string, string]
+    }
   }
 
-  values(): string[] {
-    return this.#entries.map(([, v]) => v)
+  * keys(): IterableIterator<string> {
+    for (const [k] of this.#entries) {
+      yield k
+    }
+  }
+
+  * values(): IterableIterator<string> {
+    for (const [, v] of this.#entries) {
+      yield v
+    }
+  }
+
+  [Symbol.iterator](): IterableIterator<[string, string]> {
+    return this.entries()
   }
 
   toString(): string {

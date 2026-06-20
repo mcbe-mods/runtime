@@ -1,0 +1,19 @@
+# Normalize line endings for all text files
+* text=auto eol=lf
+
+# TypeScript files
+*.ts text eol=lf
+*.tsx text eol=lf
+
+# JSON
+*.json text eol=lf
+
+# YAML
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Markdown
+*.md text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
