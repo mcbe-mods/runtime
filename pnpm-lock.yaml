@@ -185,6 +185,9 @@ importers:
         specifier: catalog:deps
         version: 1.0.0-beta.0
     devDependencies:
+      '@mcbe-mods/compress':
+        specifier: workspace:^
+        version: link:../compress
       '@minecraft/server':
         specifier: catalog:deps
         version: 1.18.0(@minecraft/vanilla-data@1.26.21)

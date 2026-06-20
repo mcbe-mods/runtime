@@ -52,7 +52,7 @@
     "mini-emit": "catalog:deps"
   },
   "devDependencies": {
-    "@mcbe-mods/compress": "catalog:",
+    "@mcbe-mods/compress": "workspace:^",
     "@minecraft/server": "catalog:deps",
     "tsdown": "catalog:cli",
     "tsnapi": "catalog:testing",
