@@ -45,7 +45,7 @@ function createStylizer(extend: string[]): Stylizer {
   const handlerColor = (...args: string[]): string => [...extend, ...args].join('')
 
   const proxy = new Proxy(handlerColor, {
-    get(target, key: string, receiver) {
+    get(target, key: string, _receiver) {
       const _key = key as keyof typeof colorCodes
       const code = colorCodes[_key]
 
@@ -53,7 +53,9 @@ function createStylizer(extend: string[]): Stylizer {
         return createStylizer([...extend, code])
       }
 
-      return Reflect.get(target, key, receiver)
+      return (..._: string[]): never => {
+        throw new TypeError(`Unknown style key: "${String(key)}". Available: ${Object.keys(colorCodes).join(', ')}`)
+      }
     },
   })
 

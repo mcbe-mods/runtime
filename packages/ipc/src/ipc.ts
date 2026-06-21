@@ -67,6 +67,22 @@ export class IPC {
    */
   constructor(options: IPCOptions = {}) {
     this.#options = { ...DEFAULT_OPTIONS, ...options }
+    const opts = this.#options
+    if (opts.chunkSize <= 0) {
+      throw new RangeError('chunkSize must be positive')
+    }
+    if (opts.chunkTimeout < 0) {
+      throw new RangeError('chunkTimeout must be non-negative')
+    }
+    if (opts.compressThreshold < 0) {
+      throw new RangeError('compressThreshold must be non-negative')
+    }
+    if (opts.maxPacketSize <= 0) {
+      throw new RangeError('maxPacketSize must be positive')
+    }
+    if (opts.maxInflightIds <= 0) {
+      throw new RangeError('maxInflightIds must be positive')
+    }
     this.#protocol = new Protocol({ cipher: options.cipher })
     this.#compressor = options.compress
     this.#chunker = new Chunker(this.#options.chunkSize)
@@ -135,9 +151,9 @@ export class IPC {
     const id = unique()
     this.#cleanStaleIds()
     if (this.#sentIds.size >= this.#options.maxInflightIds) {
-      const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
-      if (oldest) {
-        this.#sentIds.delete(oldest[0])
+      const first = this.#sentIds.keys().next().value
+      if (first !== undefined) {
+        this.#sentIds.delete(first)
       }
     }
     this.#sentIds.set(id, Date.now())
@@ -180,6 +196,9 @@ export class IPC {
     handler: (data: T) => void,
     options?: OnOptions<T>,
   ): () => void {
+    if (!channel) {
+      throw new TypeError('channel must be a non-empty string')
+    }
     const wrapped = (raw: string): void => {
       if (options?.deserializer) {
         handler(options.deserializer.deserialize(raw))
@@ -297,31 +316,39 @@ export class IPC {
     const total = url.searchParams.get('total')
     const compressed = url.searchParams.get('c') === '1'
 
-    if (compressed && !this.#compressor) {
-      this.events.emit(EVENTS.ERROR, new Error('Received compressed packet but no compressor configured'))
-      return
-    }
-
     if (seq !== null && total !== null) {
       this.#handleChunk(id, channel, Number(seq), Number(total), payload, compressed)
     }
     else {
-      const raw = compressed ? this.#compressor!.decompress(payload) : payload
-      this.#deliver(channel, raw)
+      const decompressor = this.#compressor
+      if (compressed) {
+        if (!decompressor) {
+          this.events.emit(EVENTS.ERROR, new Error('Received compressed packet but no compressor configured'))
+          return
+        }
+        this.#deliver(channel, decompressor.decompress(payload))
+      }
+      else {
+        this.#deliver(channel, payload)
+      }
     }
   }
 
   #handleChunk(id: string, channel: string, seq: number, total: number, payload: string, compressed: boolean): void {
-    if (compressed && !this.#compressor) {
-      this.events.emit(EVENTS.ERROR, new Error('Received compressed chunk but no compressor configured'))
-      return
-    }
-
     const result = this.#chunker.assemble(id, seq, total, payload, compressed, this.#options.chunkTimeout)
 
     if (result.done) {
-      const raw = result.compressed ? this.#compressor!.decompress(result.data) : result.data
-      this.#deliver(channel, raw)
+      const decompressor = this.#compressor
+      if (result.compressed) {
+        if (!decompressor) {
+          this.events.emit(EVENTS.ERROR, new Error('Received compressed chunk but no compressor configured'))
+          return
+        }
+        this.#deliver(channel, decompressor.decompress(result.data))
+      }
+      else {
+        this.#deliver(channel, result.data)
+      }
     }
   }
 

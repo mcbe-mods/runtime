@@ -26,7 +26,7 @@ describe('Color', () => {
     expect(green('b')).toBe('§ab')
   })
 
-  it('unknown property access returns undefined', () => {
-    expect((Color as any).unknown).toBeUndefined()
+  it('unknown property access throws on call', () => {
+    expect(() => (Color as any).unknown('text')).toThrow('Unknown style key')
   })
 })

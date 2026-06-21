@@ -98,6 +98,10 @@ describe('BedrockURL', () => {
     expect(() => new BedrockURL('relative/path')).toThrow()
   })
 
+  it('throws on empty hostname', () => {
+    expect(() => new BedrockURL('bedrock://')).toThrow('non-empty hostname')
+  })
+
   it('toString returns href', () => {
     const url = new BedrockURL('bedrock://host/path?a=1')
     expect(url.toString()).toBe('bedrock://host/path?a=1')

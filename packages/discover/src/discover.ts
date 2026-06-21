@@ -109,9 +109,9 @@ export class Discover {
         }
       }
       if (this.#sentIds.size >= this.#options.maxInflightIds) {
-        const oldest = [...this.#sentIds.entries()].sort((a, b) => a[1] - b[1])[0]
-        if (oldest) {
-          this.#sentIds.delete(oldest[0])
+        const first = this.#sentIds.keys().next().value
+        if (first !== undefined) {
+          this.#sentIds.delete(first)
         }
       }
       this.#sentIds.set(nonce, now)
