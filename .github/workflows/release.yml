@@ -54,7 +54,7 @@ jobs:
       # 4. Dry-run then Publish
       # =========================
       - name: Dry-run publish
-        run: pnpm -r publish --dry-run --access public
+        run: pnpm -r publish --dry-run --no-git-checks --access public
 
       - name: Publish to npm
         run: |
