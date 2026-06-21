@@ -1,4 +1,3 @@
-import type { TRet } from '@noble/ciphers/utils.js'
 import { Base64, utf8Decode, utf8Encode } from '@mcbe-mods/utils'
 import { rngChacha20, xchacha20poly1305 } from '@noble/ciphers/chacha.js'
 import { managedNonce } from '@noble/ciphers/utils.js'
@@ -7,33 +6,30 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 const KEY_LENGTH = 32
 
-let rng: ReturnType<typeof rngChacha20> | null = null
-
-function defaultRandomBytes(bytesLength: number): Uint8Array {
-  if (!rng) {
-    const seed = new Uint8Array(32)
-    for (let i = 0; i < 32; i++) {
-      seed[i] = (Math.random() * 256) | 0
-    }
-    rng = rngChacha20(seed)
-  }
-  return rng.randomBytes(bytesLength)
-}
-
 export interface CipherOptions {
   randomBytes?: (size: number) => Uint8Array
 }
 
 export class Cipher {
   readonly #impl: { encrypt: (data: Uint8Array) => Uint8Array, decrypt: (data: Uint8Array) => Uint8Array }
+  readonly #rng: ReturnType<typeof rngChacha20>
 
   private constructor(key: Uint8Array, options?: CipherOptions) {
-    const randomBytes = options?.randomBytes ?? defaultRandomBytes
-    this.#impl = managedNonce(xchacha20poly1305, size => randomBytes(size ?? 24) as unknown as TRet<Uint8Array>)(key)
+    const seed = new Uint8Array(32)
+    for (let i = 0; i < 32; i++) {
+      seed[i] = (Math.random() * 256) | 0
+    }
+    this.#rng = rngChacha20(seed)
+    const randomBytes = options?.randomBytes ?? ((size: number) => this.#rng.randomBytes(size))
+    this.#impl = managedNonce(xchacha20poly1305, ((size?: number) => randomBytes(size ?? 24)) as any)(key)
   }
 
   static generateSalt(length: number = 16): Uint8Array {
-    return defaultRandomBytes(length)
+    const seed = new Uint8Array(32)
+    for (let i = 0; i < 32; i++) {
+      seed[i] = (Math.random() * 256) | 0
+    }
+    return rngChacha20(seed).randomBytes(length)
   }
 
   /**

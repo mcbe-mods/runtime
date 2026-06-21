@@ -27,5 +27,10 @@ export function utf8Decode(bytes: Uint8Array): string {
   for (const b of bytes) {
     s += `%${b.toString(16).padStart(2, '0').toUpperCase()}`
   }
-  return decodeURIComponent(s)
+  try {
+    return decodeURIComponent(s)
+  }
+  catch {
+    throw new Error('Invalid UTF-8 byte sequence')
+  }
 }

@@ -93,6 +93,9 @@ export class BedrockURL {
 
     this.#searchParams = new URLSearchParams(searchStr)
     this.#parseAuthority(authority)
+    if (!this.#hostname) {
+      throw new TypeError('BedrockURL must have a non-empty hostname')
+    }
   }
 
   #parseAuthority(authority: string): void {
